@@ -11,7 +11,8 @@
 #include "Camera.h"
 #include "Collision.h"
 #include "Grid.h"
-
+#include "Entity.h"
+#include "Component.h"
 #include "memory"
 #include <chrono>
 // Some of the code for the spotlight is from the following repo
@@ -73,6 +74,16 @@ int main()
     Shader lightShader("light.vert", "light.frag");
     lightShader.Activate();
 
+
+    //Entity Initializing
+    Entity entites;
+    entites.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
+    PositionComponent* position = entites.GetComponent<PositionComponent>();
+    if (position) {
+        std::cout << "Position: (" << position->position.x << ", "
+            << position->position.y << ", "
+            << position->position.z << ")" << std::endl;
+    }
     //Making Grid for better collison handeling  
     int cellSize = 8; 
     int gridSizeX = 1000; 
