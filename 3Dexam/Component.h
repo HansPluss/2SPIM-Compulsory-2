@@ -21,6 +21,25 @@ class VelocityComponent : public Component {
     VelocityComponent(float vx = 0, float vy = 0, float vz = 0)
         : velocity(vx, vy, vz) {}
 }; 
+class AccelerationComponent : public Component {
+
+    glm::vec3 acceleration;
+
+    AccelerationComponent(float ax = 0, float ay = 0, float az = 0)
+        : acceleration(ax, ay, az) {}
+};
+class HealthComponent : public Component {
+    float health;
+    HealthComponent(float hp = 100)
+        : health(hp){}
+
+};
+class DamageComponent : public Component {
+    float damage;
+    DamageComponent(float dmg = 10)
+        : damage(dmg){}
+
+};
 class RenderComponent : public Component {
 public:
     glm::vec3 color;
