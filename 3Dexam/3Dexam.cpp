@@ -13,6 +13,8 @@
 #include "Grid.h"
 #include "Entity.h"
 #include "Component.h"
+#include "RenderingSystem.h"
+#include "PhysicsSystem.h"
 #include "memory"
 #include <chrono>
 // Some of the code for the spotlight is from the following repo
@@ -78,12 +80,18 @@ int main()
     //Entity Initializing
     Entity entites;
     entites.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
+    entites.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
     PositionComponent* position = entites.GetComponent<PositionComponent>();
     if (position) {
         std::cout << "Position: (" << position->position.x << ", "
             << position->position.y << ", "
             << position->position.z << ")" << std::endl;
     }
+
+    //Intializing Rendersystem
+    RenderingSystem renderSystem;
+   
+
     //Making Grid for better collison handeling  
     int cellSize = 8; 
     int gridSizeX = 1000; 
@@ -209,7 +217,8 @@ int main()
         // balls
         glBindTexture(GL_TEXTURE_2D, queball.texture);
         Cube0.Render(shaderProgram, viewproj);
-
+        glBindTexture(GL_TEXTURE_2D, wood.texture);
+        renderSystem.Render(entites, shaderProgram, viewproj);
         for (int i = 0; i < balls.size(); ++i) {
             glBindTexture(GL_TEXTURE_2D, textures[i].texture);
             balls[i].Render(shaderProgram, viewproj);

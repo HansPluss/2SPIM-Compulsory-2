@@ -166,6 +166,7 @@
     <ClInclude Include="includes\GLFW\glfw3native.h" />
     <ClInclude Include="includes\glm\mat4x3.hpp" />
     <ClInclude Include="includes\KHR\khrplatform.h" />
+    <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderingSystem.h" />
     <ClInclude Include="Resources\ImportedCode\Construct.h" />
     <ClInclude Include="Resources\Shaders\EBO.h" />
