@@ -28,4 +28,12 @@ public:
             draw.Render(shader, viewproj);
         }
     }
+    void Rotate(Entity& entity, float deltaTime) {
+        auto* renderComponent = entity.GetComponent<RenderComponent>();
+        if (renderComponent) {
+
+            draw.RotateCube(deltaTime);
+        }
+
+    }
 };

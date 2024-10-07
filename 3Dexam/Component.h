@@ -49,3 +49,27 @@ public:
     RenderComponent(const glm::vec3& color, const glm::vec3& size, const std::string& shape)
         : color(color), size(size), shape(shape) {}
 };
+class CollisionComponent : public Component {
+public:
+    glm::vec3 size;
+    float radius;
+    bool isColliding = false;
+    CollisionComponent(glm::vec3& size, float radius) 
+        : size(size), radius(radius) {
+
+
+    }
+
+};
+class AIComponent : public Component {
+public:
+    float speed;
+    float detectionRadius;
+
+    AIComponent(float speed, float radius)
+        : speed(speed), detectionRadius(radius) {
+
+
+    }
+
+};

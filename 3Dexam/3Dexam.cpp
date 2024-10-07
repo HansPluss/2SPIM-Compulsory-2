@@ -80,7 +80,9 @@ int main()
     //Entity Initializing
     Entity entites;
     entites.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
-    entites.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
+    entites.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"plane");
+
+
     PositionComponent* position = entites.GetComponent<PositionComponent>();
     if (position) {
         std::cout << "Position: (" << position->position.x << ", "
@@ -90,6 +92,7 @@ int main()
 
     //Intializing Rendersystem
     RenderingSystem renderSystem;
+    
    
 
     //Making Grid for better collison handeling  
@@ -217,6 +220,7 @@ int main()
         // balls
         glBindTexture(GL_TEXTURE_2D, queball.texture);
         Cube0.Render(shaderProgram, viewproj);
+
         glBindTexture(GL_TEXTURE_2D, wood.texture);
         renderSystem.Render(entites, shaderProgram, viewproj);
         for (int i = 0; i < balls.size(); ++i) {
