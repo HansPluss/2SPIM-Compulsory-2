@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include "glm/glm.hpp"
+#include "Tick.h"
 
 
 class Shader;
@@ -21,7 +22,7 @@ struct Vertex
 
 
 };
-class Draw {
+class Draw : public Tick {
 public:
 	Draw();
 
@@ -44,6 +45,9 @@ public:
 	void RotateCube(float deltaTime);
 	void CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3 normal);
 	void FollowPlayer(Draw& ball, float speed);
+	void UpdateGrid(Grid* grid);
+
+	virtual void UpdateTick(float deltatime) override; 
 
 	//|-----------------------------------------------------------------------------|
 	//|									Getters										|

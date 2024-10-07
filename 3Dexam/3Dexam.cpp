@@ -17,6 +17,7 @@
 #include "PhysicsSystem.h"
 #include "memory"
 #include <chrono>
+#include "Tick.h"
 // Some of the code for the spotlight is from the following repo
 // https://github.com/VictorGordan/opengl-tutorials.git
 // 
@@ -93,7 +94,9 @@ int main()
     //Intializing Rendersystem
     RenderingSystem renderSystem;
     
-   
+   //tick
+
+    std::vector<Tick*> Ticks;
 
     //Making Grid for better collison handeling  
     int cellSize = 8; 
@@ -107,12 +110,15 @@ int main()
     Draw Cube0;
     Cube0.DrawSphere(glm::vec3(23, 100, 145), glm::vec3( -15, 0, 0), glm::vec3(0.45, 0.45, 0.45));
     m_grid->AddBaLL(&Cube0); 
+    Ticks.push_back(&Cube0); 
 
 
     Draw BoundingBox0;
     BoundingBox0.DrawBoundingBox(glm::vec3(1, 1, 1), glm::vec3(0, 0, 0), glm::vec3(20, 1, 10));
+    Ticks.push_back(&BoundingBox0);
     Draw TableSurface;
     TableSurface.DrawPlane(glm::vec3(1, 1, 1), glm::vec3(0, 0, 0), glm::vec3(20, 1, 10));
+    Ticks.push_back(&TableSurface);
 
     Collision collision;
 
@@ -183,6 +189,7 @@ int main()
     auto previousTime = std::chrono::high_resolution_clock::now();
     while (!glfwWindowShouldClose(window))
     {
+        
 
         processInput(window, Cube0);
 
@@ -193,12 +200,17 @@ int main()
 
         // Calculate delta time (in seconds)
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
-
         // Update previousTime for the next frame
         previousTime = currentTime;
-
         // Now you can use deltaTime.count() which gives you the delta time in seconds
         float dt = deltaTime.count();
+        //updates Tick
+        
+        for (Tick* obj : Ticks)
+        {
+            obj->UpdateTick(dt);
+        }
+
         camera.Inputs(window);
 
         //Set render distance and FOV

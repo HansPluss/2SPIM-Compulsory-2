@@ -427,3 +427,18 @@ void Draw::FollowPlayer(Draw& ball, float speed)
     }
 }
 
+void Draw::UpdateGrid(Grid* grid)
+{
+    Cell* newCell = grid->getCell(this->position);
+    if (newCell != this->ownerCell)
+    {
+        grid->RemoveBallFromCell(this);
+        grid->AddBaLL(this, newCell);
+    }
+}
+
+void Draw::UpdateTick(float deltatime)
+{
+    
+}
+
