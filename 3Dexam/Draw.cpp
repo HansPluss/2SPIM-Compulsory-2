@@ -112,7 +112,7 @@ void Draw::DrawPlane(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
     glm::vec3 normal = glm::normalize(glm::cross(AB, AC));
     normalvector = normal;
     // Output normal for debugging
-    std::cout << "Normal Vector: (" << normal.x << ", " << normal.y << ", " << normal.z << ")\n";
+    //std::cout << "Normal Vector: (" << normal.x << ", " << normal.y << ", " << normal.z << ")\n";
     this->Initalize();
 }
 
@@ -390,7 +390,8 @@ glm::vec3 Draw::GetNormal()
 
 void Draw::CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3 normal) {
     float gravity = 9.81f;
-
+    
+    
     // Downward gravity force
     glm::vec3 gravityForce(0.0f, -gravity, 0.0f);
 

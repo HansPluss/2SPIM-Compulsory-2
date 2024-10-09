@@ -15,25 +15,45 @@ public:
         if (renderComponent && positionComponent) {
             // Render based on the shape type
             if (renderComponent->shape == "cube") {
-                draw.DrawCube(renderComponent->color, positionComponent->position, renderComponent->size);
+                renderComponent->Draw.DrawCube(renderComponent->color, positionComponent->position, renderComponent->size);
             }
             else if (renderComponent->shape == "plane") {
-                draw.DrawPlane(renderComponent->color, positionComponent->position, renderComponent->size);
+                renderComponent->Draw.DrawPlane(renderComponent->color, positionComponent->position, renderComponent->size);
             }
             else if (renderComponent->shape == "sphere") {
-                draw.DrawSphere(renderComponent->color, positionComponent->position, renderComponent->size);
+                renderComponent->Draw.DrawSphere(renderComponent->color, positionComponent->position, renderComponent->size);
             }
-
+            else if (renderComponent->shape == "boundingbox") {
+                renderComponent->Draw.DrawBoundingBox(renderComponent->color, positionComponent->position, renderComponent->size);
+            }
+            
             // Call the general render function
-            draw.Render(shader, viewproj);
+            renderComponent->Draw.Render(shader, viewproj);
+            SetVertecies(entity);
         }
     }
     void Rotate(Entity& entity, float deltaTime) {
         auto* renderComponent = entity.GetComponent<RenderComponent>();
         if (renderComponent) {
 
-            draw.RotateCube(deltaTime);
+            renderComponent->Draw.RotateCube(deltaTime);
         }
 
     }
+    void UpdateGrid() {
+
+
+    }
+    void SetVertecies(Entity& entity) {
+        auto* renderComponent = entity.GetComponent<RenderComponent>();
+        if (renderComponent) {
+            renderComponent->vertices = renderComponent->Draw.GetVertices();
+            //std::cout << renderComponent->vertices.size() << "size of vert" << std::endl;
+
+        }
+        
+        
+
+    }
+
 };

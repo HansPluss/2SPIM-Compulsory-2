@@ -15,6 +15,7 @@
 #include "Component.h"
 #include "RenderingSystem.h"
 #include "PhysicsSystem.h"
+#include "CollisionSystem.h"
 #include "memory"
 #include <chrono>
 #include "Tick.h"
@@ -80,10 +81,15 @@ int main()
 
     //Entity Initializing
     Entity entites;
-    entites.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
-    entites.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"plane");
+    entites.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    entites.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
+    entites.AddComponent<VelocityComponent>();
+    entites.AddComponent<AccelerationComponent>();
 
-
+    Entity boundingbox;
+    boundingbox.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    boundingbox.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 10.0f), "plane");
+   
     PositionComponent* position = entites.GetComponent<PositionComponent>();
     if (position) {
         std::cout << "Position: (" << position->position.x << ", "
@@ -91,9 +97,10 @@ int main()
             << position->position.z << ")" << std::endl;
     }
 
-    //Intializing Rendersystem
+    //Intializing System
     RenderingSystem renderSystem;
-    
+    PhysicsSystem physicsSystem;
+    CollisionSystem collisionSystem;
    //tick
 
     std::vector<Tick*> Ticks;
@@ -168,7 +175,7 @@ int main()
     Texture queball("Resources/Textures/queball.png", shaderProgram);
 
     //scene light
-    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    glm::vec4 lightColor = glm::vec4(1.0f, 0.9f, 1.0f, 1.0f);
     glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 lightModel = glm::mat4(1.0f);
     glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
@@ -233,8 +240,22 @@ int main()
         glBindTexture(GL_TEXTURE_2D, queball.texture);
         Cube0.Render(shaderProgram, viewproj);
 
+        
         glBindTexture(GL_TEXTURE_2D, wood.texture);
         renderSystem.Render(entites, shaderProgram, viewproj);
+
+        glBindTexture(GL_TEXTURE_2D, textures[0].texture);
+        renderSystem.Render(boundingbox, shaderProgram, viewproj);
+        physicsSystem.Update(entites, dt);
+        physicsSystem.ApplyForce(entites, glm::vec3(-1.0f, 0.0f, 1.0f));
+        collisionSystem.BarycentricCoordinates(entites, boundingbox, physicsSystem);
+        if (collisionSystem.InvAABBCollision(boundingbox, entites, dt)) {
+        
+        }
+        
+       
+        
+
         for (int i = 0; i < balls.size(); ++i) {
             glBindTexture(GL_TEXTURE_2D, textures[i].texture);
             balls[i].Render(shaderProgram, viewproj);
@@ -286,6 +307,7 @@ void processInput(GLFWwindow* window, Draw& cube0)
         glm::vec3 force(0.0f, -9.810f, 20.0f);
 
         cube0.ApplyForce(force);
+        
     }
     else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         glm::vec3 force(0.0f, -9.810f, -20.0f);
