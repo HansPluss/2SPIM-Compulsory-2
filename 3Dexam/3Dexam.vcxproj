@@ -141,22 +141,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="3Dexam.cpp" />
+    <ClCompile Include="BaseItem.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Draw.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="HealthPotion.cpp" />
+    <ClCompile Include="InventoryComponent.cpp" />
+    <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="Resources\ImportedCode\Construct.cpp" />
     <ClCompile Include="Resources\Shaders\EBO.cpp" />
     <ClCompile Include="Resources\Shaders\shaderClass.cpp" />
     <ClCompile Include="Resources\Shaders\VAO.cpp" />
     <ClCompile Include="Resources\Shaders\VBO.cpp" />
     <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="SpeedPotion.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tick.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseItem.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="CollisionSystem.h" />
@@ -164,11 +170,14 @@
     <ClInclude Include="Draw.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="HealthPotion.h" />
     <ClInclude Include="includes\assimp\Bitmap.h" />
     <ClInclude Include="includes\GLFW\glfw3.h" />
     <ClInclude Include="includes\GLFW\glfw3native.h" />
     <ClInclude Include="includes\glm\mat4x3.hpp" />
     <ClInclude Include="includes\KHR\khrplatform.h" />
+    <ClInclude Include="InventoryComponent.h" />
+    <ClInclude Include="ItemData.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderingSystem.h" />
     <ClInclude Include="Resources\ImportedCode\Construct.h" />
@@ -177,6 +186,7 @@
     <ClInclude Include="Resources\Shaders\VAO.h" />
     <ClInclude Include="Resources\Shaders\VBO.h" />
     <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="SpeedPotion.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tick.h" />
   </ItemGroup>

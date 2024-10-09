@@ -19,6 +19,11 @@
 #include "memory"
 #include <chrono>
 #include "Tick.h"
+#include "InventoryComponent.h"
+#include "ItemData.h"
+#include "BaseItem.h"
+#include "HealthPotion.h"
+#include "SpeedPotion.h"
 // Some of the code for the spotlight is from the following repo
 // https://github.com/VictorGordan/opengl-tutorials.git
 // 
@@ -118,6 +123,21 @@ int main()
     Cube0.DrawSphere(glm::vec3(23, 100, 145), glm::vec3( -15, 0, 0), glm::vec3(0.45, 0.45, 0.45));
     m_grid->AddBaLL(&Cube0); 
     Ticks.push_back(&Cube0); 
+
+
+	//inventory TESTING
+	InventoryComponent inventory;
+	HealthPotion healthPotion;
+	SpeedPotion speedPotion;
+	ItemData healthPotionData(&healthPotion, healthPotion.GetItemID(), true, 5, 1);
+	ItemData SpeedPotionData(&speedPotion, speedPotion.GetItemID(), true, 5, 1);
+	inventory.AddItem(healthPotionData);
+	inventory.AddItem(SpeedPotionData);
+	inventory.UseItem(0);
+	inventory.UseItem(1);
+    inventory.UseItem(1);
+
+
 
 
     Draw BoundingBox0;

@@ -288,7 +288,6 @@ void Collision::calculateBarycentricCoordinates(Draw& ball, Draw& drawObject)
 				float inclineAngle = std::acos(normal.y);
 				float slopeDirection = atan2(normal.z, normal.x);
 				glm::vec3 Dirvec = ball.GetVelocity();
-				std::cout << ball.GetVelocity().y << std::endl;
 				glm::vec3 slopeVector = glm::normalize(glm::vec3(normal.x, 0, normal.z)); // Horizontal direction of the slope
 
 				// Determine if the ball is moving uphill or downhill based on the velocity and the normal
