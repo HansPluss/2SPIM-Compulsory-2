@@ -33,7 +33,7 @@
 // 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window, Draw& cube0);
+void processInput(GLFWwindow* window);
 
 // settings
 const unsigned int SCR_WIDTH = 1960;
@@ -137,10 +137,7 @@ int main()
    
 
     //Initializing queue ball
-    Draw Cube0;
-    Cube0.DrawSphere(glm::vec3(23, 100, 145), glm::vec3( -15, 0, 0), glm::vec3(0.45, 0.45, 0.45));
-    m_grid->AddBaLL(&Cube0); 
-    Ticks.push_back(&Cube0); 
+  
 
 
 	//inventory TESTING
@@ -156,33 +153,12 @@ int main()
     inventory.UseItem(1);
 
 
-    Draw BoundingBox0;
-    BoundingBox0.DrawBoundingBox(glm::vec3(1, 1, 1), glm::vec3(0, 0, 0), glm::vec3(20, 1, 10));
-    Ticks.push_back(&BoundingBox0);
-    Draw TableSurface;
-    TableSurface.DrawPlane(glm::vec3(1, 1, 1), glm::vec3(0, 0, 0), glm::vec3(20, 1, 10));
-    Ticks.push_back(&TableSurface);
+    
 
-    Collision collision;
-
-    BoundingBox0.SetMass(10000.0f);
-
-    int ballNumber = 1;
-    std::vector<Position> ballPositions;
-    for (int row = 0; row < 5; ++row) {
-        for (int col = 0; col <= row; ++col) {
-            // Calculate x and y positions based on row and column
-            double x = col * 1.f - row * 0.5f;  // Center balls by subtracting row * radius
-            double y = -row * 1.f;                   // Increase y with each row
-
-            ballPositions.push_back({ x , -y +10});
-            //std::cout << "Ball " << ballNumber << ": (" << x << ", " << y << ")\n";
-            ++ballNumber;
-        }
-    }
+    
 
     std::vector<Texture> textures;
-    std::vector<Draw> balls;
+    
     char basePath[] = "Resources/Textures/";
     char filetype[] = ".png";
 
@@ -194,12 +170,7 @@ int main()
         Texture tt(filePath, shaderProgram);  // Pass the C-style string to the constructor
         textures.push_back(tt);
 
-        Draw ball;
-        ball.DrawSphere(glm::vec3(23, 100, 145), glm::vec3(ballPositions[i-1].y, 0, ballPositions[i-1].x), glm::vec3(0.45, 0.45, 0.45));
        
-        balls.push_back(ball);
-     
-        m_grid->AddBaLL(&ball);
     }
 
     //camera FOV & starting position
@@ -238,7 +209,7 @@ int main()
     {
         
 
-        processInput(window, Cube0);
+        processInput(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -266,14 +237,7 @@ int main()
         
 
 
-        // ROTATION
-        Cube0.RotateCube(dt);
-        Cube0.Update(dt, m_grid.get());
-        for (size_t i = 0; i < balls.size(); ++i) {
-            balls[i].Update(dt, m_grid.get());
-            balls[i].FollowPlayer(Cube0, 2.0f);
-            balls[i].RotateCube(dt);
-        }
+      
  
 
         // BALLS
@@ -289,9 +253,9 @@ int main()
         physicsSystem.Update(entites, dt);
         physicsSystem.ApplyForce(entites, glm::vec3(-1.0f, 0.0f, 1.0f));
         collisionSystem.BarycentricCoordinates(entites, boundingbox, physicsSystem);
-        if (collisionSystem.InvAABBCollision(boundingbox, entites, dt)) {
+        collisionSystem.InvAABBCollision(boundingbox, entites, dt);
+       
         
-        }
         
         // Player
         inputSystem.processInput(player, window);
@@ -302,30 +266,8 @@ int main()
 
 
 
-        for (int i = 0; i < balls.size(); ++i) {
-            glBindTexture(GL_TEXTURE_2D, textures[i].texture);
-            //balls[i].Render(shaderProgram, viewproj);
-            collision.InvAABBCollision(BoundingBox0, balls[i], dt);
-          
-            collision.calculateBarycentricCoordinates(balls[i], TableSurface);
-        
-        }
 
-
-        // walls
-        glBindTexture(GL_TEXTURE_2D, wood.texture);
-        //BoundingBox0.Render(shaderProgram, viewproj);
-        glBindTexture(GL_TEXTURE_2D, green.texture);
-        //TableSurface.Render(shaderProgram, viewproj);
-
-        //wall collision
-        collision.InvAABBCollision(BoundingBox0, Cube0, dt);
-        collision.calculateBarycentricCoordinates(Cube0, TableSurface);
-        
-        //spheres collision
-        collision.UpdateCollision(m_grid.get(), dt); 
-        //collision.UpdateQTCollision(tree, balls, Cube0,dt);
-        // 
+       
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -344,35 +286,11 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window, Draw& cube0)
+void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-
-        glm::vec3 force(0.0f, -9.810f, 20.0f);
-
-        cube0.ApplyForce(force);
-        
-    }
-    else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        glm::vec3 force(0.0f, -9.810f, -20.0f);
-
-        cube0.ApplyForce(force);
-
-    }
-    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        glm::vec3 force(-20.0f, -9.810f, 0.0f);
-
-        cube0.ApplyForce(force);
-
-    }
-    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        glm::vec3 force(20.0f, -9.810f, 0.0f);
-
-        cube0.ApplyForce(force);
-
-    }
+  
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
