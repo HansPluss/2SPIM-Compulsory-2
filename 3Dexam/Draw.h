@@ -12,6 +12,7 @@
 class Shader;
 struct Cell; 
 class Grid; 
+class PositionComponent;
 struct Vertex
 {
 
@@ -37,7 +38,7 @@ public:
 	//|-----------------------------------------------------------------------------|
 	//|									Public Functions							|
 	//|-----------------------------------------------------------------------------|		
-	void Render(Shader shader, glm::mat4 viewproj);
+	void Render(Shader shader, glm::mat4 viewproj, PositionComponent& pos);
 	void Update(float deltaTime, Grid* grid);
 	void ApplyForce(glm::vec3 force);
 	void MoveXdir();

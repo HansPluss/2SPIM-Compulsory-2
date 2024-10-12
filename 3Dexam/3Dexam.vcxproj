@@ -171,6 +171,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="HealthPotion.h" />
     <ClInclude Include="includes\assimp\Bitmap.h" />

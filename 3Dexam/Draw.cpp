@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include "Resources/Shaders/shaderClass.h"
 #include "Grid.h"
+#include "Component.h"
 
 Draw::Draw() : rotation(glm::quat(0.0, 0.0, 0.0, 0.0))
 {
@@ -252,14 +253,14 @@ void Draw::Initalize()
     EBO1.Unbind();
 }
 
-void Draw::Render(Shader Shader, glm::mat4 viewproj)
+void Draw::Render(Shader Shader, glm::mat4 viewproj, PositionComponent& pos)
 {
     glm::mat4 model2 = glm::mat4(1.0f);
 
     //glm::quat quaterninon = glm::quat(0.0, 0.0, 0.0, 0.0);
     //glm::mat4 rotationMatrix = glm::mat4_cast(quaterninon);
     rotation = glm::mat4_cast(Quaternion);
-    model2 = glm::translate(model2, position);
+    model2 = glm::translate(model2, pos.position);
     model2 = glm::scale(model2, objSize);
     model2 *= rotation;
     glUniformMatrix4fv(glGetUniformLocation(Shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(viewproj * model2));

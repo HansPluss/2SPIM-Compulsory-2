@@ -120,6 +120,10 @@ int main()
     RenderingSystem renderSystem;
     PhysicsSystem physicsSystem;
     CollisionSystem collisionSystem;
+
+	renderSystem.initalize(entites);
+	renderSystem.initalize(boundingbox);
+	renderSystem.initalize(player);
    //tick
 
     std::vector<Tick*> Ticks;
@@ -274,7 +278,7 @@ int main()
 
         // BALLS
         glBindTexture(GL_TEXTURE_2D, queball.texture);
-        Cube0.Render(shaderProgram, viewproj);
+        //Cube0.Render(shaderProgram, viewproj);
 
         
         glBindTexture(GL_TEXTURE_2D, wood.texture);
@@ -300,7 +304,7 @@ int main()
 
         for (int i = 0; i < balls.size(); ++i) {
             glBindTexture(GL_TEXTURE_2D, textures[i].texture);
-            balls[i].Render(shaderProgram, viewproj);
+            //balls[i].Render(shaderProgram, viewproj);
             collision.InvAABBCollision(BoundingBox0, balls[i], dt);
           
             collision.calculateBarycentricCoordinates(balls[i], TableSurface);
@@ -310,9 +314,9 @@ int main()
 
         // walls
         glBindTexture(GL_TEXTURE_2D, wood.texture);
-        BoundingBox0.Render(shaderProgram, viewproj);
+        //BoundingBox0.Render(shaderProgram, viewproj);
         glBindTexture(GL_TEXTURE_2D, green.texture);
-        TableSurface.Render(shaderProgram, viewproj);
+        //TableSurface.Render(shaderProgram, viewproj);
 
         //wall collision
         collision.InvAABBCollision(BoundingBox0, Cube0, dt);
