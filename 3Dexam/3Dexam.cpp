@@ -11,9 +11,7 @@
 
 #include "Resources/Shaders/shaderClass.h"
 #include "Texture.h"
-#include "Draw.h"
 #include "Camera.h"
-#include "Collision.h"
 #include "Grid.h"
 #include "Entity.h"
 #include "Component.h"
@@ -22,7 +20,7 @@
 #include "PhysicsSystem.h"
 #include "CollisionSystem.h"
 #include "InputSystem.h"
-
+//inventory system (should be in player class)
 #include "InventoryComponent.h"
 #include "ItemData.h"
 #include "BaseItem.h"
