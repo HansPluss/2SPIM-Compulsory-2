@@ -85,3 +85,17 @@ public:
     }
 
 };
+class InputComponent : public Component {
+public:
+    bool moveUp, moveDown, moveLeft, moveRight;
+
+    InputComponent()
+        : moveUp(false), moveDown(false), moveLeft(false), moveRight(false) {}
+
+    void updateInput(bool up, bool down, bool left, bool right) {
+        moveUp = up;
+        moveDown = down;
+        moveLeft = left;
+        moveRight = right;
+    }
+};

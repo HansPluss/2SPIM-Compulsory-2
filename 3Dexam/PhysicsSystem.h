@@ -5,20 +5,22 @@
 class PhysicsSystem {
 public:
 	RigidBody rigidBody;
-	void Update(Entity& entity,float deltaTime) {
+	void Update(Entity& entity, float deltaTime) {
 		auto* positionComponent = entity.GetComponent<PositionComponent>();
 		auto* velocityComponent = entity.GetComponent<VelocityComponent>();
 		auto* accelerationComponent = entity.GetComponent<AccelerationComponent>();
-		if (positionComponent && velocityComponent && accelerationComponent) {
-			rigidBody.Update(*positionComponent, *velocityComponent, *accelerationComponent, deltaTime);
 
+		if (positionComponent && velocityComponent && accelerationComponent) {
+			positionComponent->position += velocityComponent->velocity * deltaTime;
+
+			rigidBody.Update(*positionComponent, *velocityComponent, *accelerationComponent, deltaTime);
 		}
 	}
 	void ApplyForce(Entity& entity, glm::vec3 force) {
 		
 		auto* accelerationComponent = entity.GetComponent<AccelerationComponent>();
 		if (accelerationComponent) {
-
+			
 			rigidBody.ApplyForce(*accelerationComponent, force);
 		}
 	}

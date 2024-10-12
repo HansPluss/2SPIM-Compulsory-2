@@ -5,6 +5,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdlib> 
 #include <stb/stb_image.h>
+#include "memory"
+#include <chrono>
+#include "Tick.h"
+
 #include "Resources/Shaders/shaderClass.h"
 #include "Texture.h"
 #include "Draw.h"
@@ -13,12 +17,12 @@
 #include "Grid.h"
 #include "Entity.h"
 #include "Component.h"
+
 #include "RenderingSystem.h"
 #include "PhysicsSystem.h"
 #include "CollisionSystem.h"
-#include "memory"
-#include <chrono>
-#include "Tick.h"
+#include "InputSystem.h"
+
 #include "InventoryComponent.h"
 #include "ItemData.h"
 #include "BaseItem.h"
@@ -84,6 +88,16 @@ int main()
     lightShader.Activate();
 
 
+    // Initializing player entity
+    Entity player;
+    player.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
+    player.AddComponent<VelocityComponent>();
+    player.AddComponent<AccelerationComponent>();
+    player.AddComponent<InputComponent>();
+    player.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "cube");
+
+    InputSystem inputSystem;
+
     //Entity Initializing
     Entity entites;
     entites.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
@@ -118,7 +132,7 @@ int main()
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
    
 
-    //Initializing objects
+    //Initializing queue ball
     Draw Cube0;
     Cube0.DrawSphere(glm::vec3(23, 100, 145), glm::vec3( -15, 0, 0), glm::vec3(0.45, 0.45, 0.45));
     m_grid->AddBaLL(&Cube0); 
@@ -136,8 +150,6 @@ int main()
 	inventory.UseItem(0);
 	inventory.UseItem(1);
     inventory.UseItem(1);
-
-
 
 
     Draw BoundingBox0;
@@ -214,6 +226,10 @@ int main()
     int timeSinceStart = 0;
 
     auto previousTime = std::chrono::high_resolution_clock::now();
+
+    // ---------------------------------------------------------------------------------------------------------------------------
+    //                                                        Main Loop
+    // ---------------------------------------------------------------------------------------------------------------------------
     while (!glfwWindowShouldClose(window))
     {
         
@@ -243,11 +259,11 @@ int main()
         //Set render distance and FOV
         glm::mat4 viewproj = camera.Matrix(45.0f, 0.1f, 1000.0f, shaderProgram, "camMatrix");
 
+        
 
-        // UNCOMMENT FOR ROTATION
+
+        // ROTATION
         Cube0.RotateCube(dt);
-        //Cube1.RotateCube(dt);
-        //Cube2.RotateCube(dt);
         Cube0.Update(dt, m_grid.get());
         for (size_t i = 0; i < balls.size(); ++i) {
             balls[i].Update(dt, m_grid.get());
@@ -256,7 +272,7 @@ int main()
         }
  
 
-        // balls
+        // BALLS
         glBindTexture(GL_TEXTURE_2D, queball.texture);
         Cube0.Render(shaderProgram, viewproj);
 
@@ -273,8 +289,14 @@ int main()
         
         }
         
-       
-        
+        // Player
+        inputSystem.processInput(player, window);
+        physicsSystem.Update(player, dt);
+        glBindTexture(GL_TEXTURE_2D, green.texture);
+        renderSystem.Render(player, shaderProgram, viewproj);
+        collisionSystem.BarycentricCoordinates(player, boundingbox, physicsSystem);
+
+
 
         for (int i = 0; i < balls.size(); ++i) {
             glBindTexture(GL_TEXTURE_2D, textures[i].texture);

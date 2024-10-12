@@ -145,9 +145,11 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Draw.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="HealthPotion.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="InventoryComponent.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="Resources\ImportedCode\Construct.cpp" />
@@ -176,6 +178,7 @@
     <ClInclude Include="includes\GLFW\glfw3native.h" />
     <ClInclude Include="includes\glm\mat4x3.hpp" />
     <ClInclude Include="includes\KHR\khrplatform.h" />
+    <ClInclude Include="InputSystem.h" />
     <ClInclude Include="InventoryComponent.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="PhysicsSystem.h" />

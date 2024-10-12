@@ -38,4 +38,3 @@ private:
 	static int idCounter;
 	std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
 };
-int Entity::idCounter = 0;
