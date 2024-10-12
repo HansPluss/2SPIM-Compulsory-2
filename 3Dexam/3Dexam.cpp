@@ -44,16 +44,13 @@ struct Position {
 
 int main()
 {
-
     // glfw: initialize and configure
-    // ------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
-    // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Test Win", NULL, NULL);
     if (window == NULL)
     {
@@ -66,79 +63,70 @@ int main()
     gladLoadGL();
 
     // glad: load all OpenGL function pointers
-    // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
-    // build and compile our shader program
-    // ------------------------------------
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
+    // Shader setup
     Shader shaderProgram("default.vert", "default.frag");
-    shaderProgram.Activate(); // you can name your shader files however you like
+    shaderProgram.Activate();
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
     Shader lightShader("light.vert", "light.frag");
     lightShader.Activate();
 
 
-    // Initializing player entity
+    // player Entity
     Entity player;
     player.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
     player.AddComponent<VelocityComponent>();
     player.AddComponent<AccelerationComponent>();
     player.AddComponent<InputComponent>();
-    player.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "cube");
-
+    player.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "sphere");
     InputSystem inputSystem;
 
-    //Entity Initializing
-    Entity entites;
-    entites.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
-    entites.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
-    entites.AddComponent<VelocityComponent>();
-    entites.AddComponent<AccelerationComponent>();
+    // woodenBall Entity
+    Entity woodenBall;
+    woodenBall.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    woodenBall.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
+    woodenBall.AddComponent<VelocityComponent>();
+    woodenBall.AddComponent<AccelerationComponent>();
 
-    Entity boundingbox;
-    boundingbox.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
-    boundingbox.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 10.0f), "plane");
+    // planeObject Entity
+    Entity planeObject;
+    planeObject.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 10.0f), "plane");
    
-    PositionComponent* position = entites.GetComponent<PositionComponent>();
+
+    PositionComponent* position = woodenBall.GetComponent<PositionComponent>();
     if (position) {
         std::cout << "Position: (" << position->position.x << ", "
             << position->position.y << ", "
             << position->position.z << ")" << std::endl;
     }
 
-    //Intializing System
+    // Intializing Systems
     RenderingSystem renderSystem;
     PhysicsSystem physicsSystem;
     CollisionSystem collisionSystem;
 
-	renderSystem.initalize(entites);
-	renderSystem.initalize(boundingbox);
+	renderSystem.initalize(woodenBall);
+	renderSystem.initalize(planeObject);
 	renderSystem.initalize(player);
-   //tick
 
     std::vector<Tick*> Ticks;
 
-    //Making Grid for better collison handeling  
+    // Setting up grid for collison optimization  
     int cellSize = 8; 
     int gridSizeX = 1000; 
     int gridSizeZ = 1000; 
     std::unique_ptr<Grid> m_grid = std::make_unique<Grid>(gridSizeX, gridSizeZ, cellSize);
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
-   
 
-    //Initializing queue ball
-  
-
-
-	//inventory TESTING
+	// Inventory ///TESTING///
 	InventoryComponent inventory;
 	HealthPotion healthPotion;
 	SpeedPotion speedPotion;
@@ -150,25 +138,18 @@ int main()
 	inventory.UseItem(1);
     inventory.UseItem(1);
 
-
-    
-
-    
-
     std::vector<Texture> textures;
     
     char basePath[] = "Resources/Textures/";
     char filetype[] = ".png";
 
     for (int i = 1; i <= 15; ++i) {
-        std::string tempPath = std::string(basePath) + std::to_string(i) + filetype;  // Use std::string to build the file path
-        char filePath[31];  // Adjust size as needed
-        strcpy_s(filePath, tempPath.c_str());  // Copy std::string into C-style string (char array)
+        std::string tempPath = std::string(basePath) + std::to_string(i) + filetype;    // Use std::string to build the file path
+        char filePath[31];
+        strcpy_s(filePath, tempPath.c_str());                                           // Copy std::string into C-style string (char array)
 
-        Texture tt(filePath, shaderProgram);  // Pass the C-style string to the constructor
+        Texture tt(filePath, shaderProgram);                                            // Pass the C-style string to the constructor
         textures.push_back(tt);
-
-       
     }
 
     //camera FOV & starting position
@@ -205,8 +186,6 @@ int main()
     // ---------------------------------------------------------------------------------------------------------------------------
     while (!glfwWindowShouldClose(window))
     {
-        
-
         processInput(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -216,73 +195,48 @@ int main()
 
         // Calculate delta time (in seconds)
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
-        // Update previousTime for the next frame
         previousTime = currentTime;
-        // Now you can use deltaTime.count() which gives you the delta time in seconds
-        float dt = deltaTime.count();
+        float dt = deltaTime.count();   
+  
         //updates Tick
-        
         for (Tick* obj : Ticks)
         {
             obj->UpdateTick(dt);
         }
 
+        //Setup camera settings and inputs
         camera.Inputs(window);
-
-        //Set render distance and FOV
         glm::mat4 viewproj = camera.Matrix(45.0f, 0.1f, 1000.0f, shaderProgram, "camMatrix");
 
-        
-
-
-      
- 
-
         // BALLS
-        glBindTexture(GL_TEXTURE_2D, queball.texture);
-        //Cube0.Render(shaderProgram, viewproj);
-
-        
         glBindTexture(GL_TEXTURE_2D, wood.texture);
-        renderSystem.Render(entites, shaderProgram, viewproj);
+        renderSystem.Render(woodenBall, shaderProgram, viewproj);
 
-        glBindTexture(GL_TEXTURE_2D, textures[0].texture);
-        renderSystem.Render(boundingbox, shaderProgram, viewproj);
-        physicsSystem.Update(entites, dt);
-        physicsSystem.ApplyForce(entites, glm::vec3(-1.0f, 0.0f, 1.0f));
-        collisionSystem.BarycentricCoordinates(entites, boundingbox, physicsSystem);
-        collisionSystem.InvAABBCollision(boundingbox, entites, dt);
+        glBindTexture(GL_TEXTURE_2D, green.texture);
+        renderSystem.Render(planeObject, shaderProgram, viewproj);
+        physicsSystem.Update(woodenBall, dt);
+        physicsSystem.ApplyForce(woodenBall, glm::vec3(-1.0f, 0.0f, 1.0f));
+        collisionSystem.BarycentricCoordinates(woodenBall, planeObject, physicsSystem);
+        collisionSystem.InvAABBCollision(planeObject, woodenBall, dt);
        
-        
-        
         // Player
         inputSystem.processInput(player, window);
         physicsSystem.Update(player, dt);
-        glBindTexture(GL_TEXTURE_2D, green.texture);
+        glBindTexture(GL_TEXTURE_2D, textures[1].texture);
         renderSystem.Render(player, shaderProgram, viewproj);
-        collisionSystem.BarycentricCoordinates(player, boundingbox, physicsSystem);
+        collisionSystem.BarycentricCoordinates(player, planeObject, physicsSystem);
 
-
-
-
-       
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
+        // Swap buffers and poll IO events
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-
-
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
+    // Clearing GLFW resources
     glfwTerminate();
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// Process all input
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
@@ -291,11 +245,9 @@ void processInput(GLFWwindow* window)
   
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// Dynamic window size
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }

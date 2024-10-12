@@ -24,7 +24,7 @@ private:
 	//|-----------------------------------------------------------------------------|
 	bool SphereCollison(Draw& objA, Draw& objB, float DeltaTime);
 	void CollisionCalculations(Draw& objA, Draw& objB, float DeltaTime);
-	void BallCollisionResponse(Draw& objA, Draw& objB);
+	void ObjectCollisionResponse(Draw& objA, Draw& objB);
 	void CheckCollision(Draw* ball, std::vector<Draw*>& BallToCheck, int startingIndex, float dt);
 	
 };

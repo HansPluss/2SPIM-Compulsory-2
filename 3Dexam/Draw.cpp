@@ -46,7 +46,7 @@ void Draw::DrawCube(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 
 
 
-    // Corrected indices
+    // Indices
     indices = {
         // Front face
         0, 1, 2, 2, 3, 0,
@@ -95,21 +95,20 @@ void Draw::DrawPlane(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 
 
 
-    // Corrected indices
+    // Indices
     indices = {
-        // Top face
     0,1,2,1,2,3
     };
-    // Calculate the normal
+    // Calculating the normal
     glm::vec3 A = glm::vec3(v1.x, v1.y, v1.z);
     glm::vec3 B = glm::vec3(v2.x, v2.y, v2.z);
     glm::vec3 C = glm::vec3(v0.x, v0.y, v0.z);
 
-    // Create vectors AB and AC
+    // Creating vectors AB and AC
     glm::vec3 AB = B - A;
     glm::vec3 AC = C - A;
 
-    // Calculate the normal using the cross product
+    // Calculating the normal using the cross product
     glm::vec3 normal = glm::normalize(glm::cross(AB, AC));
     normalvector = normal;
     // Output normal for debugging
@@ -150,7 +149,7 @@ void Draw::DrawBoundingBox(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 
 
 
-    // Corrected indices
+    // Indices
     indices = {
         // Front face
         0, 1, 2, 2, 3, 0,
@@ -214,7 +213,7 @@ void Draw::DrawSphere(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
             int currentRow = layer * (half_slices + 1) * 2;
             int nextRow = (layer + 1) * (half_slices + 1) * 2;
 
-            // Create two triangles (quad) between each pair of vertices in adjacent layers
+            // Creating two triangles (quad) between each pair of vertices in adjacent layers
             indices.push_back(currentRow + i);        // 1st triangle: curRow, nextRow, nextRow+1
             indices.push_back(nextRow + i);
             indices.push_back(nextRow + i + 1);

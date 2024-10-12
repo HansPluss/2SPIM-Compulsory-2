@@ -8,7 +8,6 @@
 #include "glm/glm.hpp"
 #include "Tick.h"
 
-
 class Shader;
 struct Cell; 
 class Grid; 
@@ -23,6 +22,7 @@ struct Vertex
 
 
 };
+
 class Draw : public Tick {
 public:
 	Draw();
@@ -53,7 +53,6 @@ public:
 	//|-----------------------------------------------------------------------------|
 	//|									Getters										|
 	//|-----------------------------------------------------------------------------|
-
 	glm::vec3 GetPosition();
 	float GetMass();
 	glm::vec3 GetVelocity();
@@ -66,7 +65,6 @@ public:
 	//|-----------------------------------------------------------------------------|
 	//|									Setters										|
 	//|-----------------------------------------------------------------------------|
-
 	void SetPosition(glm::vec3 newPos);
 	void SetMass(float newMass);
 	void SetVelocity(glm::vec3 newVelocity);
@@ -77,17 +75,17 @@ public:
 	//|-----------------------------------------------------------------------------|
 	//|									Grid										|
 	//|-----------------------------------------------------------------------------|
-
-	//what cell in the grid it's located
+	// Which cell in the grid it's located within
 	Cell* ownerCell = nullptr; 
-	//what position in the cellvector it's located
+	// Current position in the cell-vector
 	int cellvectorindex = -1; 
 
 private:
 	//|-----------------------------------------------------------------------------|
-	//|									Private Functions							|
+	//|								Private Functions								|
 	//|-----------------------------------------------------------------------------|
 	void Initalize();
+
 	//|-----------------------------------------------------------------------------|
 	//|								Private variables								|
 	//|-----------------------------------------------------------------------------|
@@ -114,7 +112,6 @@ private:
 	//|-----------------------------------------------------------------------------|
 	//|									??????										|
 	//|-----------------------------------------------------------------------------|
-
 	glm::quat Quaternion = glm::quat(1.0, 0.0, 0.0, 0.0);
 
 };
