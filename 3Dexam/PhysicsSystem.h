@@ -6,6 +6,7 @@ class PhysicsSystem {
 public:
 	RigidBody rigidBody;
 	void Update(Entity& entity, float deltaTime) {
+		if (entity.isMarkedForDeletion) return;
 		auto* positionComponent = entity.GetComponent<PositionComponent>();
 		auto* velocityComponent = entity.GetComponent<VelocityComponent>();
 		auto* accelerationComponent = entity.GetComponent<AccelerationComponent>();
@@ -18,6 +19,7 @@ public:
 	}
 	void ApplyForce(Entity& entity, glm::vec3 force) {
 		
+		if (entity.isMarkedForDeletion) return;
 		auto* accelerationComponent = entity.GetComponent<AccelerationComponent>();
 		if (accelerationComponent) {
 			

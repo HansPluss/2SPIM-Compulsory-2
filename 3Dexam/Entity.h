@@ -11,6 +11,7 @@ class Entity {
 
 public:
 	int id;
+	bool isMarkedForDeletion;
 	int GetId() {
 		return id;
 	}
@@ -20,7 +21,7 @@ public:
 	}
 	Entity() {
 		id = idCounter++;
-
+		isMarkedForDeletion = false;
 		
 
 	}
@@ -33,7 +34,7 @@ public:
 		auto it = components.find(typeid(T));
 		return (it != components.end()) ? static_cast<T*>(it->second.get()) : nullptr;
 	}
-
+	
 private:
 	static int idCounter;
 	std::unordered_map<std::type_index, std::unique_ptr<Component>> components;

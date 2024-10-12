@@ -2,6 +2,7 @@
 #include "Draw.h"
 #include "Entity.h"
 #include "Resources/Shaders/shaderClass.h"
+#include "Grid.h"
 class Shader;
 class RenderingSystem {
 public:
@@ -9,33 +10,50 @@ public:
 
     void initalize(Entity& entity)
     {
+        if (entity.isMarkedForDeletion) return;
         auto* renderComponent = entity.GetComponent<RenderComponent>();
         auto* positionComponent = entity.GetComponent<PositionComponent>();
+        if (positionComponent && renderComponent) {
+            if (renderComponent->shape == "cube") {
+                renderComponent->Draw.DrawCube(renderComponent->color, positionComponent->position, renderComponent->size);
+    
+                
+            }
+            else if (renderComponent->shape == "plane") {
+                renderComponent->Draw.DrawPlane(renderComponent->color, positionComponent->position, renderComponent->size);
+            }
+            else if (renderComponent->shape == "sphere") {
+                renderComponent->Draw.DrawSphere(renderComponent->color, positionComponent->position, renderComponent->size);
+            }
+            else if (renderComponent->shape == "boundingbox") {
+                renderComponent->Draw.DrawBoundingBox(renderComponent->color, positionComponent->position, renderComponent->size);
+            }
 
-        if (renderComponent->shape == "cube") {
-            renderComponent->Draw.DrawCube(renderComponent->color, positionComponent->position, renderComponent->size);
+
         }
-        else if (renderComponent->shape == "plane") {
-            renderComponent->Draw.DrawPlane(renderComponent->color, positionComponent->position, renderComponent->size);
-        }
-        else if (renderComponent->shape == "sphere") {
-            renderComponent->Draw.DrawSphere(renderComponent->color, positionComponent->position, renderComponent->size);
-        }
-        else if (renderComponent->shape == "boundingbox") {
-            renderComponent->Draw.DrawBoundingBox(renderComponent->color, positionComponent->position, renderComponent->size);
-        }
+       
         SetVertecies(entity);
     }
 
     void Render(Entity& entity, Shader& shader, glm::mat4 viewproj) {
         // Check if the entity has a RenderComponent
+        if (entity.isMarkedForDeletion) return;
         auto* renderComponent = entity.GetComponent<RenderComponent>();
-        auto* positionComponent = entity.GetComponent<PositionComponent>();        
+        auto* positionComponent = entity.GetComponent<PositionComponent>();
+        if (positionComponent && renderComponent) {
+
             // Call the general render function
             renderComponent->Draw.Render(shader, viewproj, *positionComponent);
+            if (renderComponent->shape == "cube") {
+                std::cout << "Marked" << std::endl;
+
+            }
+        }
+          
         
     }
     void Rotate(Entity& entity, float deltaTime) {
+        if (entity.isMarkedForDeletion) return;
         auto* renderComponent = entity.GetComponent<RenderComponent>();
         if (renderComponent) {
 
@@ -43,11 +61,16 @@ public:
         }
 
     }
-    void UpdateGrid() {
+    void UpdateGrid(Entity& entity, Grid* grid) {
+        if (entity.isMarkedForDeletion) return;
+        auto* renderComponent = entity.GetComponent<RenderComponent>();
+        if (renderComponent) {
+            renderComponent->Draw.UpdateGrid(grid);
 
-
+        }
     }
     void SetVertecies(Entity& entity) {
+        if (entity.isMarkedForDeletion) return;
         auto* renderComponent = entity.GetComponent<RenderComponent>();
         if (renderComponent) {
             renderComponent->vertices = renderComponent->Draw.GetVertices();

@@ -16,6 +16,7 @@
 #include "Entity.h"
 #include "Component.h"
 
+#include "EntityManager.h"
 #include "RenderingSystem.h"
 #include "PhysicsSystem.h"
 #include "CollisionSystem.h"
@@ -32,7 +33,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-
+bool del = false;
 // settings
 const unsigned int SCR_WIDTH = 1960;
 const unsigned int SCR_HEIGHT = 1080;
@@ -78,7 +79,15 @@ int main()
     Shader lightShader("light.vert", "light.frag");
     lightShader.Activate();
 
-
+    EntityManager manager;
+    Entity& newEntity = manager.CreateEntity();
+    newEntity.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    newEntity.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f), "cube");
+   
+    if (newEntity.GetComponent<RenderComponent>()) {
+        //std::cout << "Marked" << std::endl;
+    }
+    
     // player Entity
     Entity player;
     player.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
@@ -116,8 +125,16 @@ int main()
 	renderSystem.initalize(woodenBall);
 	renderSystem.initalize(planeObject);
 	renderSystem.initalize(player);
-
+   
     std::vector<Tick*> Ticks;
+
+    // FOR TESTING PURPOSE
+    std::vector<Entity*> myEntities;
+    myEntities.push_back(&newEntity);
+    for (auto& entity : myEntities) {
+        renderSystem.initalize(*entity);
+
+    }
 
     // Setting up grid for collison optimization  
     int cellSize = 8; 
@@ -178,7 +195,8 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     int timeSinceStart = 0;
-
+   
+   // myEntities.push_back(&newEntity);
     auto previousTime = std::chrono::high_resolution_clock::now();
 
     // ---------------------------------------------------------------------------------------------------------------------------
@@ -225,8 +243,21 @@ int main()
         glBindTexture(GL_TEXTURE_2D, textures[1].texture);
         renderSystem.Render(player, shaderProgram, viewproj);
         collisionSystem.BarycentricCoordinates(player, planeObject, physicsSystem);
+       
+       
+        for (auto& entity : myEntities) {
+            glBindTexture(GL_TEXTURE_2D, wood.texture);
+            renderSystem.Render(*entity, shaderProgram, viewproj);
+           
+        }
+        
 
         // Swap buffers and poll IO events
+        if (del) {
+            manager.MarkForDeletion(newEntity);
+            manager.CleanupEntities(myEntities);
+            del = false;
+        }
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -242,6 +273,8 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+        del = true;
   
 }
 

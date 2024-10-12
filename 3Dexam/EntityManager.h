@@ -11,13 +11,20 @@ public:
         return *entities.back();
     }
 
-    void CleanupEntities(std::vector<Entity> entities) {
+    void CleanupEntities(std::vector<Entity*>& entities) {
         entities.erase(std::remove_if(entities.begin(), entities.end(),
-            [](const std::unique_ptr<Entity>& entity) {
-                //return entity->isMarkedForDeletion;  // Delete marked entities
+            [](Entity* entity) {
+                return entity->isMarkedForDeletion;  // Delete marked entities
             }), entities.end());
     }
 
+    void MarkForDeletion(Entity& entity) {
+        entity.isMarkedForDeletion = true;
+
+    }
+    std::vector<std::unique_ptr<Entity>>& GetEntities() {
+        return entities;
+    }
 private:
     std::vector<std::unique_ptr<Entity>> entities;
 

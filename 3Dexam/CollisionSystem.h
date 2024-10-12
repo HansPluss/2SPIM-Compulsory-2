@@ -23,7 +23,7 @@ public:
         auto* ballRenderComponent = ballEntity.GetComponent<RenderComponent>();
         auto* planePositionComponent = planeEntity.GetComponent<PositionComponent>();
         auto* planeRenderComponent = planeEntity.GetComponent<RenderComponent>();
-
+        if (ballEntity.isMarkedForDeletion) return;
         if (!positionComponent || !velocityComponent || !ballRenderComponent || !planePositionComponent || !planeRenderComponent) {
             return; // Ensuring components exist
         }
@@ -135,7 +135,7 @@ public:
 
 
 	bool InvAABBCollision(Entity& entityA, Entity& entityB, float deltaTime) {
-
+        if (entityA.isMarkedForDeletion || entityB.isMarkedForDeletion) return false;
 		auto* positionA = entityA.GetComponent<PositionComponent>();
 		auto* velocityB = entityB.GetComponent<VelocityComponent>();
 		auto* positionB = entityB.GetComponent<PositionComponent>();
@@ -175,7 +175,38 @@ public:
 	}
     bool SphereCollision(Entity& entityA, Entity& entityB, float deltaTime) {
         auto* positionA = entityA.GetComponent<PositionComponent>();
+        auto* velocityA = entityA.GetComponent<VelocityComponent>();
         auto* velocityB = entityB.GetComponent<VelocityComponent>();
         auto* positionB = entityB.GetComponent<PositionComponent>();
+
+
+        glm::vec3 sizeA = entityA.GetComponent<RenderComponent>()->size;
+        glm::vec3 sizeB = entityB.GetComponent<RenderComponent>()->size;
+
+        // Predict positions using velocities
+        glm::vec3 futurePosA = positionA->position + velocityA->velocity * deltaTime;
+        glm::vec3 futurePosB = positionB->position + velocityB->velocity * deltaTime;
+
+        // Calculate the distance between the centers of both objects
+        float distanceCenters = glm::length(futurePosA - futurePosB);
+
+        // Check if the distance is less than the sum of the radii (collision detection)
+        if (distanceCenters <= (sizeA.x + sizeB.x)) { // Assuming size.x is the radius for both
+
+            // Calculate the minimum translation vector to resolve penetration
+            float minimumTranslation = sizeA.x + sizeB.x - distanceCenters;
+            glm::vec3 directionVec = glm::normalize(positionA->position - positionB->position);
+
+            // Move objA out of collision
+            positionA->position += directionVec * minimumTranslation;
+
+            // Handle the response (you may update velocities, handle physics, etc.)
+            //ObjectCollisionResponse(objA, objB);
+
+            return true;
+        }
+
+        // No collision
+        return false;
     }
 };
