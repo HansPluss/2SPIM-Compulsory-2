@@ -14,7 +14,7 @@ public:
     {
 		for (auto& i : items)
 		{
-			if (i.GetItemID() == item.GetItemID() && i.GetNumItems() + item.GetNumItems() > i.GetStackSize())
+			if (i.GetItemID() == item.GetItemID() && i.GetNumItems() + item.GetNumItems() < i.GetStackSize() + 1)
 			{
 				i.numItems += item.numItems;
 				return;
@@ -63,6 +63,13 @@ public:
             }
         }
     }
+	void listItems()
+	{
+		for (auto& item : items)
+		{
+			std::cout << "Item Name: " << item.GetItemName() << " Num Items: " << item.GetNumItems() << std::endl;
+		}
+	}
 private:
     std::vector<ItemData> items;
 };

@@ -5,9 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdlib> 
 #include <stb/stb_image.h>
-#include "memory"
 #include <chrono>
-#include "Tick.h"
 
 #include "Resources/Shaders/shaderClass.h"
 #include "Texture.h"
@@ -16,11 +14,17 @@
 #include "Entity.h"
 #include "Component.h"
 
+//can be removed if unused 
+#include "Tick.h"
+#include "memory" // for smart pointers
+
+//systems
 #include "EntityManager.h"
 #include "RenderingSystem.h"
 #include "PhysicsSystem.h"
 #include "CollisionSystem.h"
 #include "InputSystem.h"
+
 //inventory system (should be in player class)
 #include "InventoryComponent.h"
 #include "ItemData.h"
@@ -35,8 +39,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 bool del = false;
 // settings
-const unsigned int SCR_WIDTH = 1960;
-const unsigned int SCR_HEIGHT = 1080;
+const unsigned int SCR_WIDTH = 400;
+const unsigned int SCR_HEIGHT = 400;
 
 struct Position {
     double x;
@@ -52,7 +56,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Test Win", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Basic RPG Game", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -147,13 +151,17 @@ int main()
 	InventoryComponent inventory;
 	HealthPotion healthPotion;
 	SpeedPotion speedPotion;
-	ItemData healthPotionData(&healthPotion, healthPotion.GetItemID(), true, 5, 1);
-	ItemData SpeedPotionData(&speedPotion, speedPotion.GetItemID(), true, 5, 1);
+	ItemData healthPotionData(&healthPotion, 1);
+	ItemData SpeedPotionData(&speedPotion, 2);
+	ItemData healthpotion2(&healthPotion, 1);
 	inventory.AddItem(healthPotionData);
 	inventory.AddItem(SpeedPotionData);
-	inventory.UseItem(0);
-	inventory.UseItem(1);
-    inventory.UseItem(1);
+	inventory.AddItem(healthPotionData);
+	inventory.listItems();
+	inventory.UseItem(healthPotion.GetItemID());
+	inventory.UseItem(speedPotion.GetItemID());
+    inventory.UseItem(speedPotion.GetItemID());
+    inventory.listItems();
 
     std::vector<Texture> textures;
     

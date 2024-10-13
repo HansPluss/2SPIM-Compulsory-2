@@ -45,7 +45,7 @@ public:
             // Call the general render function
             renderComponent->Draw.Render(shader, viewproj, *positionComponent);
             if (renderComponent->shape == "cube") {
-                std::cout << "Marked" << std::endl;
+               // std::cout << "Marked" << std::endl;
 
             }
         }
