@@ -2,8 +2,10 @@
 #include "Entity.h"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include "Player.h"
 
 class InputSystem {
+    bool bTabWasPressed = false;
 public:
     void processInput(Entity& entity, GLFWwindow* window) {
         InputComponent* input = entity.GetComponent<InputComponent>();
@@ -11,10 +13,24 @@ public:
 
         if (input) {
             // Update input states based on key presses
-            input->updateInput(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS,
+            input->updateInput(
+                glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS,
                 glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
                 glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS,
-                glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS);
+                glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS);
+
+			//Get access to player from entity
+            Player* player = dynamic_cast<Player*>(&entity);
+            if (player) {
+				//Opens inventory when tab is pressed
+                if (input->bTab && !bTabWasPressed) {
+                    std::cout << "Tab key is pressed" << std::endl;
+                    player->GetInventory();  // Call the GetInventory() function
+                }
+            }
+			// calls tab once per press
+			bTabWasPressed = input->bTab;
 
             // Update velocity based on input
             if (velocity) {
@@ -57,6 +73,7 @@ public:
                     // No movement
                     velocity->velocity = glm::vec3(0.0f, velocity->velocity.y, 0.f);
                     break;
+
                 }
             }
         }

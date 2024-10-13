@@ -7,35 +7,38 @@
 #include "Component.h"
 
 class Entity {
-	
-
 public:
-	int id;
-	bool isMarkedForDeletion;
-	int GetId() {
-		return id;
-	}
-	int SetId(int newId) {
+    int id;
+    bool isMarkedForDeletion;
 
-		id = newId;
-	}
-	Entity() {
-		id = idCounter++;
-		isMarkedForDeletion = false;
-		
+    // Make the destructor virtual to enable dynamic casting
+    virtual ~Entity() = default; // Virtual destructor for polymorphism
 
-	}
-	template<typename T, typename... Args>
-	void AddComponent(Args&&... args) {
-		components[typeid(T)] = std::make_unique<T>(std::forward<Args>(args)...);
-	}
-	template<typename T>
-	T* GetComponent() {
-		auto it = components.find(typeid(T));
-		return (it != components.end()) ? static_cast<T*>(it->second.get()) : nullptr;
-	}
-	
+    int GetId() {
+        return id;
+    }
+
+    int SetId(int newId) {
+        id = newId;
+    }
+
+    Entity() {
+        id = idCounter++;
+        isMarkedForDeletion = false;
+    }
+
+    template<typename T, typename... Args>
+    void AddComponent(Args&&... args) {
+        components[typeid(T)] = std::make_unique<T>(std::forward<Args>(args)...);
+    }
+
+    template<typename T>
+    T* GetComponent() {
+        auto it = components.find(typeid(T));
+        return (it != components.end()) ? static_cast<T*>(it->second.get()) : nullptr;
+    }
+
 private:
-	static int idCounter;
-	std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
+    static int idCounter;
+    std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
 };

@@ -87,15 +87,16 @@ public:
 };
 class InputComponent : public Component {
 public:
-    bool moveUp, moveDown, moveLeft, moveRight;
+    bool moveUp, moveDown, moveLeft, moveRight, bTab;
 
     InputComponent()
-        : moveUp(false), moveDown(false), moveLeft(false), moveRight(false) {}
+        : moveUp(false), moveDown(false), moveLeft(false), moveRight(false), bTab(false) {}
 
-    void updateInput(bool up, bool down, bool left, bool right) {
+    void updateInput(bool up, bool down, bool left, bool right, bool Tab) {
         moveUp = up;
         moveDown = down;
         moveLeft = left;
         moveRight = right;
+		bTab = Tab;
     }
 };
