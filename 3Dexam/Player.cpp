@@ -1,20 +1,19 @@
 #include "Player.h"
-#include "ItemData.h"
 #include "BaseItem.h"
-#include "HealthPotion.h"
-#include "SpeedPotion.h"
+#include <memory>
 Player::Player()
 {
-	HealthPotion healthPotion;
-	SpeedPotion speedPotion;
-	ItemData healthPotionData(&healthPotion, 2);
-	ItemData SpeedPotionData(&speedPotion, 2);
-	m_inventory.AddItem(healthPotionData);
-	m_inventory.AddItem(SpeedPotionData);
+	AddItemsToInventory();
+}
+void  Player::AddItemsToInventory() {
+
+	m_inventory.AddItem(speedPotion, 2); // Add one SpeedPotion to the inventory
+	m_inventory.AddItem(healthPotion, 2); // Add one HealthPotion to the inventory
 }
 
 Player::~Player()
 {
+	// Destructor
 }
 
 void Player::GetInventory()
@@ -28,16 +27,12 @@ void Player::AddInventoryItem(int ID)
 	{
 	case 1:
 	{
-		HealthPotion healthPotion;
-		ItemData healthPotionData(&healthPotion, 1);
-		m_inventory.AddItem(healthPotionData);
+		m_inventory.AddItem(healthPotion, 1);
 		break;
 	}
 	case 2:
 	{
-		SpeedPotion speedPotion;
-		ItemData SpeedPotionData(&speedPotion, 1);
-		m_inventory.AddItem(SpeedPotionData);
+		m_inventory.AddItem(speedPotion, 1);
 		break;
 	}
 	default:

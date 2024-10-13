@@ -3,9 +3,17 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "Player.h"
+#include "ItemData.h"
+#include "BaseItem.h"
+#include "HealthPotion.h"
+#include "SpeedPotion.h"
+#include "InventoryComponent.h"
 
 class InputSystem {
+private:
     bool bTabWasPressed = false;
+	bool bUsingItem = false;
+	int inventoryItem = 0;
 public:
     void processInput(Entity& entity, GLFWwindow* window) {
         InputComponent* input = entity.GetComponent<InputComponent>();
@@ -18,19 +26,79 @@ public:
                 glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
                 glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS,
                 glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS,
-                glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS);
+                glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS,
+
+                glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS,
+                glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS,
+				glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS
+            );
 
 			//Get access to player from entity
             Player* player = dynamic_cast<Player*>(&entity);
             if (player) {
 				//Opens inventory when tab is pressed
-                if (input->bTab && !bTabWasPressed) {
-                    std::cout << "Tab key is pressed" << std::endl;
-                    player->GetInventory();  // Call the GetInventory() function
-                }
+
+                    if (input->bTab && !bUsingItem) {
+                        player->GetInventory();  // Call the GetInventory() function
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey1 && !bUsingItem) || (inventoryItem == 0 && !bUsingItem && input->bKeyQ))
+                    {
+                        player->UseInventoryItem(0);
+                        bUsingItem = true;
+
+                    }
+                    else if ((input->bKey2 && !bUsingItem) || (inventoryItem == 1 &&  input->bKeyQ))
+                    {
+                        player->UseInventoryItem(1);
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey3 && !bUsingItem) || (inventoryItem == 2  && input->bKeyQ))
+                    {
+						std::cout << "Using item 3" << std::endl;
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey4 && !bUsingItem) || (inventoryItem == 3  && input->bKeyQ))
+                    {
+                        std::cout << "Using item 4" << std::endl;
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey5 && !bUsingItem) || (inventoryItem == 4  && input->bKeyQ))
+                    {
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey6 && !bUsingItem) || (inventoryItem == 5  && input->bKeyQ))
+                    {
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey7 && !bUsingItem) || (inventoryItem == 6  && input->bKeyQ))
+                    {
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey8 && !bUsingItem) || (inventoryItem == 7  && input->bKeyQ))
+                    {
+                        bUsingItem = true;
+                    }
+                    else if ((input->bKey9 && !bUsingItem) || (inventoryItem == 8  && input->bKeyQ))
+                    {
+                        bUsingItem = true;
+                    }
+                    if (bUsingItem)
+                    {
+						//To not call the same function multiple times when key is pressed
+                        if (!input->bTab && !input->bKey1 && !input->bKey2 && !input->bKey3 && !input->bKey4 && !input->bKey5 && !input->bKey6 && !input->bKey7 && !input->bKey8 && !input->bKey9 && !input->bKeyQ)
+                        {
+                            bUsingItem = false;
+                        }
+                    }
             }
-			// calls tab once per press
-			bTabWasPressed = input->bTab;
 
             // Update velocity based on input
             if (velocity) {
@@ -78,4 +146,9 @@ public:
             }
         }
     }
+	int SetMouseInput(int mouseValue) {
+		inventoryItem = mouseValue;
+		std::cout << "Mouse input: " << inventoryItem << std::endl;
+		return inventoryItem;
+	}
 };

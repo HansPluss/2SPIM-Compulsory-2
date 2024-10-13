@@ -6,71 +6,59 @@
 #include "BaseItem.h"
 #include <memory>
 
-class InventoryComponent : public Component
-{
+class InventoryComponent : public Component {
 public:
     // Adds an item to the inventory
-    void AddItem(const ItemData& item)
-    {
-		for (auto& i : items)
-		{
-			if (i.GetItemID() == item.GetItemID() && i.GetNumItems() + item.GetNumItems() < i.GetStackSize() + 1)
-			{
-				i.numItems += item.numItems;
-				return;
-			}
-		}
-        items.push_back(item);
+    void AddItem(std::shared_ptr<BaseItem> item, int quantity) {
+        // Create an ItemData object with the shared pointer and quantity
+        ItemData newItem(item, quantity);
+        
+        // Check for stackable items
+        for (auto& i : items) {
+            if (i.GetItemID() == newItem.GetItemID() && 
+                (i.GetNumItems() + newItem.GetNumItems() <= i.GetStackSize())) {
+                i.numItems += newItem.GetNumItems();
+                return;
+            }
+        }
+        
+        // If not stackable, add as a new item
+        items.push_back(newItem);
     }
 
-    void RemoveItem(int itemID)
-    {
-        // Find item by ID and remove it
-        for (auto it = items.begin(); it != items.end(); ++it)
-        {
-            if (it->GetItemID() == itemID)
-            {
+    void RemoveItem(int itemID) {
+        for (auto it = items.begin(); it != items.end(); ++it) {
+            if (it->GetItemID() == itemID) {
                 items.erase(it);
                 break;
             }
         }
     }
 
-    void UseItem(int itemID)
-    {
-        for (auto& item : items)
-        {
-            if (item.GetItemID() == itemID)
-            {
-                if (item.GetIsStackable() && item.GetNumItems() > 0)
-                {
-                    // Use the item (e.g., consume a potion, equip a weapon)
-                    item.GetItemReference()->Use();  // Notice the '->' for pointer dereference
+    void UseItem(int itemID) {
+        for (auto& item : items) {
+            if (item.GetItemID() == itemID) {
+                if (item.GetIsStackable() && item.GetNumItems() > 0 && item.GetItemReference() != nullptr) {
+                    item.GetItemReference()->Use();
                     item.numItems--;
-                    if (item.GetNumItems() == 0)
-                    {
-                        // Remove the item from the inventory
+                    if (item.GetNumItems() == 0) {
                         RemoveItem(itemID);
                     }
-                }
-                else
-                {
-                    // Use the item (e.g., consume a potion, equip a weapon)
-                    item.GetItemReference()->Use(); 
-                    // Remove the item from the inventory
+                } else if (!item.GetIsStackable() && item.GetItemReference() != nullptr) {
+                    item.GetItemReference()->Use();
                     RemoveItem(itemID);
                 }
             }
         }
     }
-	void listItems()
-	{
-		for (auto& item : items)
-		{
-			std::cout << "Item Name: " << item.GetItemName() << " Num Items: " << item.GetNumItems() << std::endl;
-		}
-	}
+
+    void listItems() {
+        for (auto& item : items) {
+            std::cout << "Item Name: " << item.GetItemName() << " Num Items: " << item.GetNumItems() << std::endl;
+        }
+    }
+
 private:
-    std::vector<ItemData> items;
+    std::vector<ItemData> items; // Store ItemData objects
 };
 
