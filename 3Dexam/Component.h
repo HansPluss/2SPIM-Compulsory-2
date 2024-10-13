@@ -78,7 +78,7 @@ public:
     float speed;
     float detectionRadius;
 
-    AIComponent(float speed, float radius)
+    AIComponent(float speed = 2.0f, float radius = 50.0f)
         : speed(speed), detectionRadius(radius) {
 
 
