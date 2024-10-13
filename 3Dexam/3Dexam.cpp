@@ -39,8 +39,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 bool del = false;
 // settings
-const unsigned int SCR_WIDTH = 400;
-const unsigned int SCR_HEIGHT = 400;
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 800;
 
 struct Position {
     double x;
@@ -94,7 +94,7 @@ int main()
     
     // player Entity
     Entity player;
-    player.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
+    player.AddComponent<PositionComponent>(0.0f, 10.0f, 0.0f);
     player.AddComponent<VelocityComponent>();
     player.AddComponent<AccelerationComponent>();
     player.AddComponent<InputComponent>();
@@ -103,7 +103,7 @@ int main()
 
     // woodenBall Entity
     Entity woodenBall;
-    woodenBall.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    woodenBall.AddComponent<PositionComponent>(0.0f,10.0f,0.0f);
     woodenBall.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
     woodenBall.AddComponent<VelocityComponent>();
     woodenBall.AddComponent<AccelerationComponent>();
@@ -111,7 +111,7 @@ int main()
     // planeObject Entity
     Entity planeObject;
     planeObject.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
-    planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 10.0f), "plane");
+    planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), "terrain");
    
 
     PositionComponent* position = woodenBall.GetComponent<PositionComponent>();

@@ -31,6 +31,6 @@ void RigidBody::ApplyForce(AccelerationComponent& aComponent, glm::vec3 force)
 void RigidBody::Update(PositionComponent& pComponent, VelocityComponent& vComponent, AccelerationComponent& aComponent, float deltaTime)
 {
     vComponent.velocity += aComponent.acceleration * deltaTime;
-    pComponent.position += vComponent.velocity * deltaTime;                 // need
+    pComponent.position += vComponent.velocity * deltaTime;               
     aComponent.acceleration = glm::vec3(0.0f, gravity, 0.0f);
 }

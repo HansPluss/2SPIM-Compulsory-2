@@ -12,7 +12,6 @@ public:
 		auto* accelerationComponent = entity.GetComponent<AccelerationComponent>();
 
 		if (positionComponent && velocityComponent && accelerationComponent) {
-			positionComponent->position += velocityComponent->velocity * deltaTime;
 
 			rigidBody.Update(*positionComponent, *velocityComponent, *accelerationComponent, deltaTime);
 		}

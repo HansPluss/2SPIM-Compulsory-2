@@ -7,6 +7,7 @@
 #include "Resources/Shaders/shaderClass.h"
 #include "Grid.h"
 #include "Component.h"
+#include <random> // For random seed
 
 Draw::Draw() : rotation(glm::quat(0.0, 0.0, 0.0, 0.0))
 {
@@ -226,6 +227,14 @@ void Draw::DrawSphere(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 
     this->Initalize();
 }
+
+
+
+
+
+//Tribute to DrawTerrain #RIP#Could've been a great function#2024-2024
+
+
 
 void Draw::Initalize()
 {

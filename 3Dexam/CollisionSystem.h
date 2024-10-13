@@ -17,7 +17,7 @@ public:
 
 	}
     void BarycentricCoordinates(Entity& ballEntity, Entity& planeEntity, PhysicsSystem& physicsSystem) {
-        // Accessing relevant components from ballEntity and planeEntity
+        // Access relevant components from ballEntity and planeEntity
         auto* positionComponent = ballEntity.GetComponent<PositionComponent>();
         auto* velocityComponent = ballEntity.GetComponent<VelocityComponent>();
         auto* ballRenderComponent = ballEntity.GetComponent<RenderComponent>();
@@ -25,7 +25,7 @@ public:
         auto* planeRenderComponent = planeEntity.GetComponent<RenderComponent>();
         if (ballEntity.isMarkedForDeletion) return;
         if (!positionComponent || !velocityComponent || !ballRenderComponent || !planePositionComponent || !planeRenderComponent) {
-            return; // Ensuring components exist
+            return; // Ensure all components exist
         }
 
         glm::vec3 point = positionComponent->position;
@@ -39,7 +39,7 @@ public:
         }
 
         for (int i = 0; i < planeVertices.size() - 2; ++i) {
-            // Getting vertices of the triangle
+            // Get vertices of the triangle
             glm::vec3 v0 = glm::vec3((planeVertices[i].x * planeRenderComponent->size.x) + planePositionComponent->position.x,
                 (planeVertices[i].y * planeRenderComponent->size.y) + planePositionComponent->position.y,
                 (planeVertices[i].z * planeRenderComponent->size.z) + planePositionComponent->position.z);
@@ -56,82 +56,81 @@ public:
             glm::vec3 v0v2 = v2 - v0;
             glm::vec3 v0p = point - v0;
 
-            // Computing dot products
+            // Compute dot products
             float dot00 = glm::dot(v0v1, v0v1);
             float dot01 = glm::dot(v0v1, v0v2);
             float dot02 = glm::dot(v0v1, v0p);
             float dot11 = glm::dot(v0v2, v0v2);
             float dot12 = glm::dot(v0v2, v0p);
 
-            // Computing barycentric coordinates
+            // Compute barycentric coordinates
             float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
             float v = (dot11 * dot02 - dot01 * dot12) * invDenom;
             float w = (dot00 * dot12 - dot01 * dot02) * invDenom;
             float u = 1 - v - w;
+            float height = v0.y * u + v1.y * v + v2.y * w;
 
             // If the point is inside the triangle (u, v, w > 0)
             if (u >= 0 && v >= 0 && w >= 0) {
-                // Calculate the height at the current point
-                float height = v0.y * u + v1.y * v + v2.y * w;
+                // Adjust position and velocity if ball is near the ground
+                glm::vec3 currentVelocity = velocityComponent->velocity;
 
-                // If the ball is near the ground, adjust its position and velocity
                 if (positionComponent->position.y < height + groundThreshold) {
-                    // Stopping downward motion and apply corrective force to prevent sinking
-                    if (velocityComponent->velocity.y < 0) {
-                        velocityComponent->velocity.y = 0.0f; // Stopping downward motion
+                    // Stop downward motion and apply corrective force
+                    if (currentVelocity.y < 0) {
+                        currentVelocity.y = 0.0f; // Stop downward motion
                     }
 
-                    positionComponent->position.y = height + groundThreshold;
+                    // Apply upward force to counteract gravity
+                    physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.81f, 0.0f));
+                    velocityComponent->velocity = currentVelocity;
 
-                    // Applying small upward force if it's sinking
-                    if (positionComponent->position.y < height + groundThreshold - 0.1) {
-                        physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.86f, 0.0f)); // Corrective force
+                    // Apply corrective force if sinking
+                    if (positionComponent->position.y < height + groundThreshold - 0.1) 
+                    {
+                        physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.86f, 0.0f));
                     }
 
-                    // Calculating the slope's normal vector
+                    // Calculate the normal vector for the slope
                     glm::vec3 normal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
-                    if (glm::length(normal) == 0.0f) continue; // Skipping degenerate triangles
+                    if (glm::length(normal) == 0.0f) continue; // Skip degenerate triangles
 
                     float inclineAngle = std::acos(normal.y);
-                    glm::vec3 slopeVector = glm::normalize(glm::vec3(normal.x, 0.0f, normal.z)); // Horizontal direction of the slope
+                    glm::vec3 slopeVector = glm::normalize(glm::vec3(normal.x, 0.0f, normal.z)); // Slope direction
 
-                    glm::vec3 currentVelocity = velocityComponent->velocity;
-
-                    // Adjusting velocity based on the slope
+                    // Adjust velocity based on slope incline
+                    float speedAdjustment = glm::dot(currentVelocity, slopeVector);
                     if (currentVelocity.y > 0) { // Ball is moving upward
-                        float speedAdjustment = glm::dot(currentVelocity, slopeVector);
-                        currentVelocity.y -= speedAdjustment * sin(inclineAngle); // Reducing upward velocity
+                        currentVelocity.y -= speedAdjustment * sin(inclineAngle);
 
+                        // Ensure ball doesn't go through the floor
                         if (positionComponent->position.y < height + groundThreshold) {
                             positionComponent->position.y = height + groundThreshold;
-                            currentVelocity.y = 0; // Stopping upward motion
+                            currentVelocity.y = 0; // Stop upward motion
                         }
                     }
                     else if (currentVelocity.y < 0) { // Ball is moving downward
-                        float speedAdjustment = glm::dot(currentVelocity, slopeVector);
-                        currentVelocity.y += speedAdjustment * sin(inclineAngle); // Increasing downward speed
+                        currentVelocity.y += speedAdjustment * sin(inclineAngle);
 
+                        // Ensure ball doesn't go through the floor
                         if (positionComponent->position.y < height + groundThreshold) {
                             positionComponent->position.y = height + groundThreshold;
-                            currentVelocity.y = 0; // Stopping downward motion
+                            currentVelocity.y = 0; // Stop downward motion
                         }
                     }
 
                     velocityComponent->velocity = currentVelocity;
 
-                    // Calculating gravity along the slope and apply it
+                    // Calculate gravity effect along the slope and apply force
                     glm::vec3 gravityAlongSlope = physicsSystem.CalculateGravity(inclineAngle, slopeVector, normal);
                     physicsSystem.ApplyForce(ballEntity, gravityAlongSlope);
                 }
-               
-                return; // Exiting after processing the first intersecting triangle
+
+                return; // Exit after processing the first intersecting triangle
             }
         }
-
-        // TESTING STUFF
-        // Final correction to ensure the ball doesn't sink below the ground
-        //positionComponent->position.y = groundThreshold;
     }
+
 
 
 	bool InvAABBCollision(Entity& entityA, Entity& entityB, float deltaTime) {
