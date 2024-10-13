@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Grid.h"
 #include "Entity.h"
+#include "Player.h"
 #include "Component.h"
 
 //can be removed if unused 
@@ -93,7 +94,7 @@ int main()
     }
     
     // player Entity
-    Entity player;
+    Player player;
     player.AddComponent<PositionComponent>(0.0f, 10.0f, 0.0f);
     player.AddComponent<VelocityComponent>();
     player.AddComponent<AccelerationComponent>();
