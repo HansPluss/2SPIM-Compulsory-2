@@ -38,10 +38,21 @@ bool del = false;
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
 
-struct Position {
-    double x;
-    double y;
-};
+double scrollY = 0.0;  // Store scroll amount
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    // Get the InputSystem from user pointer
+    InputSystem* inputSystem = static_cast<InputSystem*>(glfwGetWindowUserPointer(window));
+
+    scrollY += yoffset;
+    inputSystem->SetMouseInput(scrollY);
+    if (scrollY > 8.0) {
+        scrollY = 1.0;
+    }
+    else if (scrollY < 0.0) {
+        scrollY = 8.0;
+    }
+}
 
 int main()
 {
@@ -98,6 +109,8 @@ int main()
     player.AddComponent<InputComponent>();
     player.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "sphere");
     InputSystem inputSystem;
+    glfwSetWindowUserPointer(window, &inputSystem);
+    glfwSetScrollCallback(window, scroll_callback);
 
     // woodenBall Entity
     Entity woodenBall;

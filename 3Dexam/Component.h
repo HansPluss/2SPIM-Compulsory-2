@@ -88,15 +88,35 @@ public:
 class InputComponent : public Component {
 public:
     bool moveUp, moveDown, moveLeft, moveRight, bTab;
+    bool bKey1, bKey2, bKey3, bKey4, bKey5, bKey6, bKey7, bKey8, bKey9, bKeyQ;
 
     InputComponent()
-        : moveUp(false), moveDown(false), moveLeft(false), moveRight(false), bTab(false) {}
+        : moveUp(false), moveDown(false), moveLeft(false), moveRight(false),
+        bTab(false), bKey1(false), bKey2(false), bKey3(false), bKey4(false),
+        bKey5(false), bKey6(false), bKey7(false), bKey8(false),
+        bKey9(false), bKeyQ(false) {}
 
-    void updateInput(bool up, bool down, bool left, bool right, bool Tab) {
+    // Update input states
+    void updateInput(bool up, bool down, bool left, bool right, bool Tab,
+        bool key1, bool key2, bool key3, bool key4,
+        bool key5, bool key6, bool key7, bool key8,
+        bool key9, bool keyQ) {
         moveUp = up;
         moveDown = down;
         moveLeft = left;
         moveRight = right;
-		bTab = Tab;
+        bTab = Tab;
+
+        // Update number key states
+        bKey1 = key1;
+        bKey2 = key2;
+        bKey3 = key3;
+        bKey4 = key4;
+        bKey5 = key5;
+        bKey6 = key6;
+        bKey7 = key7;
+        bKey8 = key8;
+        bKey9 = key9;
+        bKeyQ = keyQ;
     }
 };

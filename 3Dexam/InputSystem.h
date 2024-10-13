@@ -55,38 +55,38 @@ public:
                         bUsingItem = true;
 
                     }
-                    else if ((input->bKey2 && !bUsingItem) || (inventoryItem == 1 &&  input->bKeyQ))
+                    else if ((input->bKey2 && !bUsingItem) || (inventoryItem == 1 &&  input->bKeyQ && !bUsingItem))
                     {
                         player->UseInventoryItem(1);
                         bUsingItem = true;
                     }
-                    else if ((input->bKey3 && !bUsingItem) || (inventoryItem == 2  && input->bKeyQ))
+                    else if ((input->bKey3 && !bUsingItem) || (inventoryItem == 2  && input->bKeyQ && !bUsingItem))
                     {
 						std::cout << "Using item 3" << std::endl;
                         bUsingItem = true;
                     }
-                    else if ((input->bKey4 && !bUsingItem) || (inventoryItem == 3  && input->bKeyQ))
+                    else if ((input->bKey4 && !bUsingItem) || (inventoryItem == 3  && input->bKeyQ && !bUsingItem))
                     {
                         std::cout << "Using item 4" << std::endl;
                         bUsingItem = true;
                     }
-                    else if ((input->bKey5 && !bUsingItem) || (inventoryItem == 4  && input->bKeyQ))
+                    else if ((input->bKey5 && !bUsingItem) || (inventoryItem == 4  && input->bKeyQ && !bUsingItem))
                     {
                         bUsingItem = true;
                     }
-                    else if ((input->bKey6 && !bUsingItem) || (inventoryItem == 5  && input->bKeyQ))
+                    else if ((input->bKey6 && !bUsingItem) || (inventoryItem == 5  && input->bKeyQ && !bUsingItem))
                     {
                         bUsingItem = true;
                     }
-                    else if ((input->bKey7 && !bUsingItem) || (inventoryItem == 6  && input->bKeyQ))
+                    else if ((input->bKey7 && !bUsingItem) || (inventoryItem == 6  && input->bKeyQ && !bUsingItem))
                     {
                         bUsingItem = true;
                     }
-                    else if ((input->bKey8 && !bUsingItem) || (inventoryItem == 7  && input->bKeyQ))
+                    else if ((input->bKey8 && !bUsingItem) || (inventoryItem == 7  && input->bKeyQ && !bUsingItem))
                     {
                         bUsingItem = true;
                     }
-                    else if ((input->bKey9 && !bUsingItem) || (inventoryItem == 8  && input->bKeyQ))
+                    else if ((input->bKey9 && !bUsingItem) || (inventoryItem == 8  && input->bKeyQ && !bUsingItem))
                     {
                         bUsingItem = true;
                     }
