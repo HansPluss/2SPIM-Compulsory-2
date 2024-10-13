@@ -152,6 +152,7 @@
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="InventoryComponent.cpp" />
     <ClCompile Include="ItemData.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Resources\ImportedCode\Construct.cpp" />
     <ClCompile Include="Resources\Shaders\EBO.cpp" />
     <ClCompile Include="Resources\Shaders\shaderClass.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="InventoryComponent.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="PhysicsSystem.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="RenderingSystem.h" />
     <ClInclude Include="Resources\ImportedCode\Construct.h" />
     <ClInclude Include="Resources\Shaders\EBO.h" />

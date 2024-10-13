@@ -26,12 +26,6 @@
 #include "CollisionSystem.h"
 #include "InputSystem.h"
 
-//inventory system (should be in player class)
-#include "InventoryComponent.h"
-#include "ItemData.h"
-#include "BaseItem.h"
-#include "HealthPotion.h"
-#include "SpeedPotion.h"
 // Some of the code for the spotlight is from the following repo
 // https://github.com/VictorGordan/opengl-tutorials.git
 // 
@@ -112,7 +106,7 @@ int main()
     // planeObject Entity
     Entity planeObject;
     planeObject.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
-    planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), "terrain");
+    planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), "plane");
    
 
     PositionComponent* position = woodenBall.GetComponent<PositionComponent>();
@@ -148,21 +142,6 @@ int main()
     std::unique_ptr<Grid> m_grid = std::make_unique<Grid>(gridSizeX, gridSizeZ, cellSize);
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
 
-	// Inventory ///TESTING///
-	InventoryComponent inventory;
-	HealthPotion healthPotion;
-	SpeedPotion speedPotion;
-	ItemData healthPotionData(&healthPotion, 1);
-	ItemData SpeedPotionData(&speedPotion, 2);
-	ItemData healthpotion2(&healthPotion, 1);
-	inventory.AddItem(healthPotionData);
-	inventory.AddItem(SpeedPotionData);
-	inventory.AddItem(healthPotionData);
-	inventory.listItems();
-	inventory.UseItem(healthPotion.GetItemID());
-	inventory.UseItem(speedPotion.GetItemID());
-    inventory.UseItem(speedPotion.GetItemID());
-    inventory.listItems();
 
     std::vector<Texture> textures;
     
