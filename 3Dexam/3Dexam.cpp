@@ -14,6 +14,7 @@
 #include "Entity.h"
 #include "Player.h"
 #include "Component.h"
+#include "Enemy.h"
 
 //can be removed if unused 
 #include "Tick.h"
@@ -83,6 +84,8 @@ int main()
     newEntity.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
     newEntity.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f), "cube");
    
+    Enemy& enemy = manager.CreateEntityDerivedFromClass<Enemy>();
+    enemy.speed = 5.0f;
     if (newEntity.GetComponent<RenderComponent>()) {
         //std::cout << "Marked" << std::endl;
     }
@@ -121,6 +124,7 @@ int main()
     PhysicsSystem physicsSystem;
     CollisionSystem collisionSystem;
 
+    renderSystem.initalize(enemy);
 	renderSystem.initalize(woodenBall);
 	renderSystem.initalize(planeObject);
 	renderSystem.initalize(player);
@@ -232,7 +236,10 @@ int main()
         renderSystem.Render(player, shaderProgram, viewproj);
         collisionSystem.BarycentricCoordinates(player, planeObject, physicsSystem);
        
-       
+        physicsSystem.Update(enemy, dt);
+        collisionSystem.BarycentricCoordinates(enemy, planeObject, physicsSystem);
+        enemy.FollowEntity(enemy, player, physicsSystem);
+        renderSystem.Render(enemy, shaderProgram, viewproj);
         for (auto& entity : myEntities) {
             glBindTexture(GL_TEXTURE_2D, wood.texture);
             renderSystem.Render(*entity, shaderProgram, viewproj);

@@ -10,7 +10,12 @@ public:
         entities.push_back(std::make_unique<Entity>());
         return *entities.back();
     }
-
+    template<typename T, typename... Args>
+    T& CreateEntityDerivedFromClass(Args&&... args) {
+        static_assert(std::is_base_of<Entity, T>::value, "T must be derived from Entity");
+        entities.push_back(std::make_unique<T>(std::forward<Args>(args)...));
+        return *static_cast<T*>(entities.back().get());
+    }
     void CleanupEntities(std::vector<Entity*>& entities) {
         entities.erase(std::remove_if(entities.begin(), entities.end(),
             [](Entity* entity) {
