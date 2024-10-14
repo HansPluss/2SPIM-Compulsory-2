@@ -8,7 +8,7 @@ class InventoryComponent;
 class Player : public Entity
 {
 public: 
-	Player(); 
+	Player();
 	~Player();
 	void GetInventory();
 	void AddInventoryItem(int ID);

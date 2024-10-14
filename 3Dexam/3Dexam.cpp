@@ -90,6 +90,7 @@ int main()
     Shader lightShader("light.vert", "light.frag");
     lightShader.Activate();
 
+    // Entities setup
     EntityManager manager;
     Entity& newEntity = manager.CreateEntity();
     newEntity.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
@@ -101,13 +102,8 @@ int main()
         //std::cout << "Marked" << std::endl;
     }
     
-    // player Entity
+    // Player Entity
     Player player;
-    player.AddComponent<PositionComponent>(0.0f, 10.0f, 0.0f);
-    player.AddComponent<VelocityComponent>();
-    player.AddComponent<AccelerationComponent>();
-    player.AddComponent<InputComponent>();
-    player.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "sphere");
     InputSystem inputSystem;
     glfwSetWindowUserPointer(window, &inputSystem);
     glfwSetScrollCallback(window, scroll_callback);
