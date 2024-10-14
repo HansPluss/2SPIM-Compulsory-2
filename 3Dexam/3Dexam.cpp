@@ -226,6 +226,7 @@ int main()
         //Setup camera settings and inputs
         camera.Inputs(window);
         glm::mat4 viewproj = camera.Matrix(45.0f, 0.1f, 1000.0f, shaderProgram, "camMatrix");
+		camera.Position = glm::vec3(player.GetComponent<PositionComponent>()->position.x, camera.Position.y, player.GetComponent<PositionComponent>()->position.z);
 
         // BALLS
         glBindTexture(GL_TEXTURE_2D, wood.texture);
