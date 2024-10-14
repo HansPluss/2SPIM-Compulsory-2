@@ -15,6 +15,7 @@
 #include "Player.h"
 #include "Component.h"
 #include "Enemy.h"
+#include "Projectile.h"
 
 //can be removed if unused 
 #include "Tick.h"
@@ -34,6 +35,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 bool del = false;
+bool spawnObj = false;
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -97,10 +99,8 @@ int main()
     newEntity.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f), "cube");
    
     Enemy& enemy = manager.CreateEntityDerivedFromClass<Enemy>();
-    enemy.speed = 5.0f;
-    if (newEntity.GetComponent<RenderComponent>()) {
-        //std::cout << "Marked" << std::endl;
-    }
+    enemy.GetComponent<AIComponent>()->speed = 5.0f;
+  
     
     // Player Entity
     Player player;
@@ -249,13 +249,27 @@ int main()
         collisionSystem.BarycentricCoordinates(enemy, planeObject, physicsSystem);
         enemy.FollowEntity(enemy, player, physicsSystem);
         renderSystem.Render(enemy, shaderProgram, viewproj);
+
+        if (spawnObj) {
+            Projectile& bullet = manager.CreateEntityDerivedFromClass<Projectile>();
+            renderSystem.initalize(bullet);
+            bullet.MoveProjectile(player, physicsSystem);
+            myEntities.push_back(&bullet);
+            spawnObj = false;
+        }
+
         for (auto& entity : myEntities) {
             glBindTexture(GL_TEXTURE_2D, wood.texture);
             renderSystem.Render(*entity, shaderProgram, viewproj);
            
         }
-        
+        for (auto& entity : myEntities) {
+            glBindTexture(GL_TEXTURE_2D, wood.texture);
+            physicsSystem.Update(*entity,dt);
 
+        }
+        
+        
         // Swap buffers and poll IO events
         if (del) {
             manager.MarkForDeletion(newEntity);
@@ -279,6 +293,8 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
         del = true;
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        spawnObj = true;
   
 }
 

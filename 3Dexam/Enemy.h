@@ -10,7 +10,7 @@ public:
 		AddComponent<RenderComponent>(glm::vec3(0.0f), glm::vec3(1.0f), "cube");
         AddComponent<VelocityComponent>();
         AddComponent<AccelerationComponent>();
-        AddComponent<AIComponent>(speed);
+        AddComponent<AIComponent>();
 	}
     void FollowEntity(Entity& follower, Entity& target, PhysicsSystem& physicssystem) {
         auto* followerPos = follower.GetComponent<PositionComponent>();

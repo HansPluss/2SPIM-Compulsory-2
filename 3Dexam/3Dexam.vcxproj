@@ -186,6 +186,7 @@
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="RenderingSystem.h" />
     <ClInclude Include="Resources\ImportedCode\Construct.h" />
     <ClInclude Include="Resources\Shaders\EBO.h" />

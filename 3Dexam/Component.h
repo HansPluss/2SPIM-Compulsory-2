@@ -15,6 +15,15 @@ public:
 
     PositionComponent(float x = 0, float y = 0, float z = 0)
         : position(x, y, z) {}
+    glm::vec3 GetPosition() {
+
+        return position;
+
+    }
+    void SetPosition(glm::vec3 newPosition) {
+        position = newPosition;
+
+    }
 };
 class VelocityComponent : public Component {
 public:
@@ -22,6 +31,15 @@ public:
 
     VelocityComponent(float vx = 0, float vy = 0, float vz = 0)
         : velocity(vx, vy, vz) {}
+    glm::vec3 GetVelocity() {
+
+        return velocity;
+
+    }
+    void SetVelocity(glm::vec3 newVelocity) {
+        velocity = newVelocity;
+
+    }
 }; 
 class AngularVelocityComponent : public Component {
 public:
@@ -29,6 +47,15 @@ public:
 
     AngularVelocityComponent(float avx = 0, float avy = 0, float avz = 0)
         : angularvelocity(avx, avy, avz) {}
+    glm::vec3 GetAngularVelocity() {
+
+        return angularvelocity;
+
+    }
+    void SetAnuglarVelocity(glm::vec3 newVelocity) {
+        angularvelocity = newVelocity;
+
+    }
 };
 class AccelerationComponent : public Component {
 public:
@@ -71,6 +98,17 @@ public:
 
 
     }
+
+};
+class PhysicsComponet : public Component {
+    float mass;
+    float gravity; 
+    PhysicsComponet(float mass = 1.0f, float gravity = 9.81f) :
+     mass(mass), gravity(gravity)    {
+
+
+    }
+
 
 };
 class AIComponent : public Component {

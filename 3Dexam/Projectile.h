@@ -1,17 +1,20 @@
 #pragma once
 #include "Entity.h"
 #include "Component.h"
+#include "PhysicsSystem.h"
 class Projectile : public Entity {
 public:
 	Projectile() {
 		AddComponent<PositionComponent>();
 		AddComponent<RenderComponent>(glm::vec3(0.0f), glm::vec3(1.0f), "sphere");
+		AddComponent<VelocityComponent>();
+		AddComponent<AccelerationComponent>();
 	}
-	void MoveProjectile(Entity& basePosition) {
+	void MoveProjectile(Entity& basePosition, PhysicsSystem& physicsSystem) {
 		auto* position = basePosition.GetComponent<PositionComponent>();
 		GetComponent<PositionComponent>()->position = position->position;
 
-
+		physicsSystem.ApplyForce(*this, glm::vec3(1.0f));
 
 	}
 
