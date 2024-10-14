@@ -1,5 +1,6 @@
 #include "Grid.h"
 #include "iostream"
+#include "Entity.h"
 
 
 
@@ -17,15 +18,15 @@ Grid::~Grid()
 {
 }
 
-void Grid::AddBaLL(Draw* ball)
+void Grid::AddBaLL(Entity* ball)
 {
-	Cell* cell = getCell(ball->GetPosition()); 
+	Cell* cell = getCell(ball->GetComponent<PositionComponent>()->position); 
 	cell->balls.push_back(ball); 
 	ball->ownerCell = cell;
 	ball->cellvectorindex = cell->balls.size() - 1; 
 }
 
-void Grid::AddBaLL(Draw* ball, Cell* cell)
+void Grid::AddBaLL(Entity* ball, Cell* cell)
 {
 	cell->balls.push_back(ball);
 	ball->ownerCell = cell;
@@ -55,26 +56,12 @@ Cell* Grid::getCell(const glm::vec3& pos)
 
 
 
-void Grid::RemoveBallFromCell(Draw* ball)
-{
-    if (!ball->ownerCell || ball->ownerCell->balls.empty())
-        return;
-
-    if (ball->cellvectorindex < 0 || ball->cellvectorindex >= static_cast<int>(ball->ownerCell->balls.size()))
-        return;
-
-    if (!ball->ownerCell->balls.empty())
-    {
-		//std::cout << ball->cellvectorindex << std::endl;
-        ball->ownerCell->balls[ball->cellvectorindex] = ball->ownerCell->balls.back();
-        ball->ownerCell->balls.pop_back();
-        if (ball->cellvectorindex < ball->ownerCell->balls.size())
-        {
-            ball->ownerCell->balls[ball->cellvectorindex]->cellvectorindex = ball->cellvectorindex;
-        }
+void Grid::RemoveBallFromCell(Entity* ball, Cell* cell) {
+    if (cell) {
+        auto& balls = cell->balls;
+        balls.erase(std::remove(balls.begin(), balls.end(), ball), balls.end());
     }
-    ball->cellvectorindex = -1;
-    ball->ownerCell = nullptr;
 }
+
 
 

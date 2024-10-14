@@ -2,6 +2,7 @@
 #include "vector"
 class Draw; 
 class Grid; 
+class Entity;
 
 class Collision
 
@@ -22,10 +23,10 @@ private:
 	//|-----------------------------------------------------------------------------|
 	//|									Private Functions							|
 	//|-----------------------------------------------------------------------------|
-	bool SphereCollison(Draw& objA, Draw& objB, float DeltaTime);
+	bool SphereCollison(Entity& objA, Entity& objB, float DeltaTime);
 	void CollisionCalculations(Draw& objA, Draw& objB, float DeltaTime);
-	void ObjectCollisionResponse(Draw& objA, Draw& objB);
-	void CheckCollision(Draw* ball, std::vector<Draw*>& BallToCheck, int startingIndex, float dt);
+	void ObjectCollisionResponse(Entity& objA, Entity& objB);
+	void CheckCollision(Entity* ball, std::vector<Entity*>& BallToCheck, int startingIndex, float dt);
 	
 };
 

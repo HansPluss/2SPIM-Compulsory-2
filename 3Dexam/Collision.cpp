@@ -5,6 +5,7 @@
 #include "iostream"
 #include <glm/gtc/type_ptr.hpp>
 #include "Grid.h"
+#include "Entity.h"
 
 Collision::Collision()
 {
@@ -27,7 +28,7 @@ void Collision::UpdateCollision(Grid* grid, float dt)
 
 		for (int j = 0; j < cell.balls.size(); ++j)
 		{
-			Draw* object = cell.balls[j];
+			Entity* object = cell.balls[j];
 			CheckCollision(object, cell.balls, j + 1, dt);
 			if (x > 0)
 			{
@@ -49,17 +50,17 @@ void Collision::UpdateCollision(Grid* grid, float dt)
 	}
 }
 
-bool Collision::SphereCollison(Draw& objA, Draw& objB, float DeltaTime)
+bool Collision::SphereCollison(Entity& objA, Entity& objB, float DeltaTime)
 {
 	//float VelocityScale = 0.05f;
-	glm::vec3 posA = objA.GetPosition() + objA.GetVelocity() * DeltaTime;
-	glm::vec3 posB = objB.GetPosition() + objB.GetVelocity() * DeltaTime;
+	glm::vec3 posA = objA.GetComponent<PositionComponent>()->position + objA.GetComponent<VelocityComponent>()->velocity * DeltaTime;
+	glm::vec3 posB = objB.GetComponent<PositionComponent>()->position + objB.GetComponent<VelocityComponent>()->velocity * DeltaTime;
 	float distance_centers = glm::length(posA - posB);
 
-	if (distance_centers <= (objA.GetSize().x + objB.GetSize().x)) {
-		float minimuntranslation = objA.GetSize().x + objB.GetSize().x - distance_centers;
-		auto dirvec = glm::normalize(objA.GetPosition() - objB.GetPosition());
-		objA.SetPosition(objA.GetPosition() + dirvec * minimuntranslation);
+	if (distance_centers <= (objA.GetComponent<RenderComponent>()->size.x + objB.GetComponent<RenderComponent>()->size.x)) {
+		float minimuntranslation = objA.GetComponent<RenderComponent>()->size.x + objB.GetComponent<RenderComponent>()->size.x - distance_centers;
+		auto dirvec = glm::normalize(objA.GetComponent<PositionComponent>()->position - objB.GetComponent<PositionComponent>()->position);
+		objA.GetComponent<PositionComponent>()->position = (objA.GetComponent<PositionComponent>()->position + dirvec * minimuntranslation);
 		ObjectCollisionResponse(objA, objB);
 
 		return true;
@@ -159,14 +160,15 @@ void Collision::CollisionCalculations(Draw &objA, Draw &objB, float DeltaTime)
 	objB.SetAngularVelocity(objB.GetAngularVelocity() + angularVelocityChangeB * 0.01f);
 }
 
-void Collision::ObjectCollisionResponse(Draw& objA, Draw& objB)
+void Collision::ObjectCollisionResponse(Entity& objA, Entity& objB)
 {
-	float massA = objA.GetMass();
-	float massB = objB.GetMass();
-	glm::vec3 posA = objA.GetPosition();
-	glm::vec3 posB = objB.GetPosition();
-	glm::vec3 velocityA = objA.GetVelocity();
-	glm::vec3 velocityB = objB.GetVelocity();
+	float massA = objA.GetComponent<PhysicsComponet>()->mass;
+ //needs to add mass to the object
+	float massB = objB.GetComponent<PhysicsComponet>()->mass;
+	glm::vec3 posA = objA.GetComponent<PositionComponent>()->position;
+	glm::vec3 posB = objB.GetComponent<PositionComponent>()->position;
+	glm::vec3 velocityA = objA.GetComponent<VelocityComponent>()->velocity;
+	glm::vec3 velocityB = objB.GetComponent<VelocityComponent>()->velocity;
 
 	glm::vec3 normal = glm::normalize(posB - posA);					// Calculating the normal vector of the collision
 	glm::vec3 relativeVelocity = velocityA - velocityB;				// Calculating the relative velocity
@@ -183,15 +185,15 @@ void Collision::ObjectCollisionResponse(Draw& objA, Draw& objB)
 	glm::vec3 newVelocityB = velocityB - (impulseVector / massB);
 
 	// Setting new velocities
-	objA.SetVelocity(newVelocityA);
-	objB.SetVelocity(newVelocityB);
+	objA.GetComponent<VelocityComponent>()->velocity = newVelocityA;
+	objB.GetComponent<VelocityComponent>()->velocity = newVelocityB;
 
 	// Setting angular velocity (optional, if needed)
-	objA.SetAngularVelocity(glm::cross(impulseVector, normal));
-	objB.SetAngularVelocity(glm::cross(-impulseVector, normal));
+	//objA.SetAngularVelocity(glm::cross(impulseVector, normal));
+	//objB.SetAngularVelocity(glm::cross(-impulseVector, normal));
 }
 
-void Collision::CheckCollision(Draw* object, std::vector<Draw*>& objectToCheck, int startingIndex, float dt)
+void Collision::CheckCollision(Entity* object, std::vector<Entity*>& objectToCheck, int startingIndex, float dt)
 {
 	for (int i = startingIndex; i < objectToCheck.size(); ++i)
 	{

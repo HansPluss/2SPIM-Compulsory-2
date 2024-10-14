@@ -1,38 +1,40 @@
 #pragma once
-#include "vector"
-#include "Draw.h"
+#include <vector>
+#include <glm/glm.hpp>
+
+class Entity;
 
 struct Cell {
-	std::vector<Draw*> balls;
+    std::vector<Entity*> balls;
 };
+
 class Grid
 {
-	friend class Collision;
-public: 
-	Grid(int width, int height, int cellSize); 
-	~Grid(); 
-	//|-----------------------------------------------------------------------------|
-	//|								Public Functions								|
-	//|-----------------------------------------------------------------------------|
-	void AddBaLL(Draw* ball);
-	void AddBaLL(Draw* ball, Cell* cell);
-	void RemoveBallFromCell(Draw* ball);
-	//|-----------------------------------------------------------------------------|
-	//|								Getters											|
-	//|-----------------------------------------------------------------------------|
+    friend class Collision;
+public:
+    Grid(int width, int height, int cellSize);
+    ~Grid();
+    //|-----------------------------------------------------------------------------|
+    //|                                Public Functions                             |
+    //|-----------------------------------------------------------------------------|
+    void AddBaLL(Entity* ball);
+    void AddBaLL(Entity* ball, Cell* cell);
+    void RemoveBallFromCell(Entity* ball, Cell* cell); // Updated to take two arguments
+    //|-----------------------------------------------------------------------------|
+    //|                                Getters                                      |
+    //|-----------------------------------------------------------------------------|
 
-	Cell* getCell(int x, int y);
-	Cell* getCell(const glm::vec3& pos);
+    Cell* getCell(int x, int y);
+    Cell* getCell(const glm::vec3& pos);
 
-private: 
-	//|-----------------------------------------------------------------------------|
-	//|								Private variables								|
-	//|-----------------------------------------------------------------------------|
-	std::vector<Cell> m_cells; 
-	int m_cellSize;
-	int m_width;
-	int m_height;
-	int m_numXCells;
-	int m_numYCells; 
+private:
+    //|-----------------------------------------------------------------------------|
+    //|                                Private variables                            |
+    //|-----------------------------------------------------------------------------|
+    std::vector<Cell> m_cells;
+    int m_cellSize;
+    int m_width;
+    int m_height;
+    int m_numXCells;
+    int m_numYCells;
 };
-

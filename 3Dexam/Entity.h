@@ -5,11 +5,14 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "Component.h"
+#include "Grid.h" // Include Grid.h to define the Grid class
 
 class Entity {
 public:
     int id;
     bool isMarkedForDeletion;
+    Cell* ownerCell = nullptr;
+    int cellvectorindex = -1;
 
     // Make the destructor virtual to enable dynamic casting
     virtual ~Entity() = default; // Virtual destructor for polymorphism
@@ -18,13 +21,23 @@ public:
         return id;
     }
 
-    int SetId(int newId) {
+    void SetId(int newId) { // Fixed return type to void
         id = newId;
     }
 
     Entity() {
         id = idCounter++;
         isMarkedForDeletion = false;
+    }
+    void updateGrid(Grid* grid)
+    {
+        Cell* newCell = grid->getCell(this->GetComponent<PositionComponent>()->position);
+        if (newCell != this->ownerCell)
+        {
+            grid->RemoveBallFromCell(this, this->ownerCell); // Updated to pass the current ownerCell
+            grid->AddBaLL(this, newCell);
+            this->ownerCell = newCell; // Update the ownerCell after moving
+        }
     }
 
     template<typename T, typename... Args>

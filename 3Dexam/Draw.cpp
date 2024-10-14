@@ -83,7 +83,7 @@ void Draw::DrawPlane(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 
     Vertex v1{ sizeXYZ.x,  -sizeXYZ.y,  sizeXYZ.z , Color.x, Color.y, Color.z, 1.0f, 0.0f };
     Vertex v2{ -sizeXYZ.x,  sizeXYZ.y,  sizeXYZ.z , Color.x, Color.y, Color.z, 0.0f, 0.0f };
-    Vertex v3{ sizeXYZ.x,  -sizeXYZ.y, -sizeXYZ.z , Color.x, Color.y, Color.z, 1.0f, 1.0f };
+    Vertex v3{ sizeXYZ.x,  sizeXYZ.y, -sizeXYZ.z , Color.x, Color.y, Color.z, 1.0f, 1.0f };
     Vertex v0{ -sizeXYZ.x,  -sizeXYZ.y, -sizeXYZ.z , Color.x, Color.y, Color.z, 0.0f, 1.0f };
 
 
@@ -334,13 +334,6 @@ void Draw::Update(float deltaTime, Grid* grid)
     velocity += Acceleration * deltaTime;
     position += velocity * deltaTime;
     Acceleration = glm::vec3(0.0f, gravity, 0.0f);
-
-    Cell* newCell = grid->getCell(this->position); 
-    if (newCell != this->ownerCell)
-    {
-        grid->RemoveBallFromCell(this);
-        grid->AddBaLL(this, newCell); 
-    }
 }
 
 void Draw::MoveXdir()
@@ -434,16 +427,6 @@ void Draw::FollowPlayer(Draw& ball, float speed)
         glm::vec3 force = dirvec * speed;
 
         ApplyForce(force); // Apply the calculated force to move the follower
-    }
-}
-
-void Draw::UpdateGrid(Grid* grid)
-{
-    Cell* newCell = grid->getCell(this->position);
-    if (newCell != this->ownerCell)
-    {
-        grid->RemoveBallFromCell(this);
-        grid->AddBaLL(this, newCell);
     }
 }
 

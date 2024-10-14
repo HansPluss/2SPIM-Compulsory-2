@@ -46,7 +46,6 @@ public:
 	void RotateCube(float deltaTime);
 	void CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3 normal);
 	void FollowPlayer(Draw& ball, float speed);
-	void UpdateGrid(Grid* grid);
 
 	virtual void UpdateTick(float deltatime) override; 
 

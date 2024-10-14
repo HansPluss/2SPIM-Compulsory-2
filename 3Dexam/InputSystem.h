@@ -42,7 +42,7 @@ public:
 
 			//Get access to player from entity
             Player* player = dynamic_cast<Player*>(&entity);
-            if (player) {
+          if (player) {
 				//Opens inventory when tab is pressed
 
                     if (input->bTab && !bUsingItem) {
@@ -98,12 +98,13 @@ public:
                             bUsingItem = false;
                         }
                     }
-            }
+            
 
             // Update velocity based on input
-            if (velocity) {
-                velocity->velocity = glm::vec3(0.0f, velocity->velocity.y, 0.f); // Reset velocity
+           // Define a maximum speed
+            const float MAX_SPEED = 50.0f; // Adjust this value to your desired speed limit
 
+            if (velocity) {
                 // Encode movement direction into a single value
                 int direction = 0;
                 if (input->moveUp) direction |= 1;
@@ -114,36 +115,46 @@ public:
                 // Switch case to handle movement direction
                 switch (direction) {
                 case 1: // Move up (W)
-                    velocity->velocity = glm::vec3(0.0f, velocity->velocity.y, -20.0f);
+                    velocity->velocity.z += -player->GetSpeed();
                     break;
                 case 2: // Move down (S)
-                    velocity->velocity = glm::vec3(0.0f, velocity->velocity.y, 20.0f);
+                    velocity->velocity.z += player->GetSpeed();
                     break;
                 case 4: // Move left (A)
-                    velocity->velocity = glm::vec3(-20.0f, velocity->velocity.y, 0.0f);
+                    velocity->velocity.x += -player->GetSpeed();
                     break;
                 case 8: // Move right (D)
-                    velocity->velocity = glm::vec3(20.0f, velocity->velocity.y, 0.0f);
+                    velocity->velocity.x += player->GetSpeed();
                     break;
                 case 5: // Move up-left (W + A)
-                    velocity->velocity = glm::vec3(-20.0f, velocity->velocity.y, -20.0f);
+                    velocity->velocity += glm::vec3(-player->GetSpeed(), 0, -player->GetSpeed());
                     break;
                 case 9: // Move up-right (W + D)
-                    velocity->velocity = glm::vec3(20.0f, velocity->velocity.y, -20.0f);
+                    velocity->velocity += glm::vec3(player->GetSpeed(), 0, -player->GetSpeed());
                     break;
                 case 6: // Move down-left (S + A)
-                    velocity->velocity = glm::vec3(-20.0f, velocity->velocity.y, 20.0f);
+                    velocity->velocity += glm::vec3(-player->GetSpeed(), 0, player->GetSpeed());
                     break;
                 case 10: // Move down-right (S + D)
-                    velocity->velocity = glm::vec3(20.0f, velocity->velocity.y, 20.0f);
+                    velocity->velocity += glm::vec3(player->GetSpeed(), 0, player->GetSpeed());
                     break;
                 default:
                     // No movement
-                    velocity->velocity = glm::vec3(0.0f, velocity->velocity.y, 0.f);
                     break;
-
                 }
+
+				if (velocity->velocity.x > player->GetMaxSpeed()) 
+                    velocity->velocity.x = player->GetMaxSpeed();
+				if (velocity->velocity.x < -player->GetMaxSpeed())
+					velocity->velocity.x = -player->GetMaxSpeed();
+				if (velocity->velocity.z > player->GetMaxSpeed())
+					velocity->velocity.z = player->GetMaxSpeed();
+				if (velocity->velocity.z < -player->GetMaxSpeed())
+					velocity->velocity.z = -player->GetMaxSpeed();
+
             }
+          }
+
         }
     }
 	int SetMouseInput(int mouseValue) {

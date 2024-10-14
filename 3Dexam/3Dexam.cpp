@@ -110,10 +110,11 @@ int main()
 
     // woodenBall Entity
     Entity woodenBall;
-    woodenBall.AddComponent<PositionComponent>(0.0f,10.0f,0.0f);
+    woodenBall.AddComponent<PositionComponent>(5.0f,10.0f,0.0f);
     woodenBall.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
     woodenBall.AddComponent<VelocityComponent>();
     woodenBall.AddComponent<AccelerationComponent>();
+	woodenBall.AddComponent<PhysicsComponet>(10);
 
     // planeObject Entity
     Entity planeObject;
@@ -154,6 +155,9 @@ int main()
     int gridSizeZ = 1000; 
     std::unique_ptr<Grid> m_grid = std::make_unique<Grid>(gridSizeX, gridSizeZ, cellSize);
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
+	m_grid->AddBaLL(&woodenBall);
+	m_grid->AddBaLL(&player);
+	m_grid->AddBaLL(&enemy);
 
 
     std::vector<Texture> textures;
@@ -199,6 +203,7 @@ int main()
    
    // myEntities.push_back(&newEntity);
     auto previousTime = std::chrono::high_resolution_clock::now();
+	Collision collision;
 
     // ---------------------------------------------------------------------------------------------------------------------------
     //                                                        Main Loop
@@ -227,6 +232,9 @@ int main()
         camera.Inputs(window);
         glm::mat4 viewproj = camera.Matrix(45.0f, 0.1f, 1000.0f, shaderProgram, "camMatrix");
 		camera.Position = glm::vec3(player.GetComponent<PositionComponent>()->position.x, camera.Position.y, player.GetComponent<PositionComponent>()->position.z);
+
+		//collision detection
+        collision.UpdateCollision(m_grid.get(), dt);
 
         // BALLS
         glBindTexture(GL_TEXTURE_2D, wood.texture);

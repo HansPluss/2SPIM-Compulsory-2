@@ -6,11 +6,12 @@ class Enemy : public Entity {
 public:
     float speed;
 	Enemy() {
-		AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
+		AddComponent<PositionComponent>(0.0f, 0.0f, 5.0f);
 		AddComponent<RenderComponent>(glm::vec3(0.0f), glm::vec3(1.0f), "cube");
         AddComponent<VelocityComponent>();
         AddComponent<AccelerationComponent>();
         AddComponent<AIComponent>();
+        AddComponent<PhysicsComponet>(10);
 	}
     void FollowEntity(Entity& follower, Entity& target, PhysicsSystem& physicssystem) {
         auto* followerPos = follower.GetComponent<PositionComponent>();

@@ -101,6 +101,7 @@ public:
 
 };
 class PhysicsComponet : public Component {
+public:
     float mass;
     float gravity; 
     PhysicsComponet(float mass = 1.0f, float gravity = 9.81f) :

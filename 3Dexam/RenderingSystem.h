@@ -65,14 +65,6 @@ public:
         }
 
     }
-    void UpdateGrid(Entity& entity, Grid* grid) {
-        if (entity.isMarkedForDeletion) return;
-        auto* renderComponent = entity.GetComponent<RenderComponent>();
-        if (renderComponent) {
-            renderComponent->Draw.UpdateGrid(grid);
-
-        }
-    }
     void SetVertecies(Entity& entity) {
         if (entity.isMarkedForDeletion) return;
         auto* renderComponent = entity.GetComponent<RenderComponent>();
