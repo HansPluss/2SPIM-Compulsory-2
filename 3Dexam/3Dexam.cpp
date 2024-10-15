@@ -119,7 +119,7 @@ int main()
     // planeObject Entity
     Entity planeObject;
     planeObject.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
-    planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), "plane");
+    planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 1.0f, 10.0f), "terrain");
    
 
     PositionComponent* position = woodenBall.GetComponent<PositionComponent>();

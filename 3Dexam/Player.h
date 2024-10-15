@@ -21,7 +21,7 @@ private:
 	std::shared_ptr<BaseItem> healthPotion = std::make_shared<HealthPotion>();
 	std::shared_ptr<BaseItem> speedPotion = std::make_shared<SpeedPotion>();
 
-	int maxSpeed = 10;
-	int speed = 1; 
+	int maxSpeed = 20;
+	int speed = 10; 
 };
 

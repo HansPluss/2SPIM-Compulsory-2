@@ -27,7 +27,10 @@ public:
             }
             else if (renderComponent->shape == "boundingbox") {
                 renderComponent->Draw.DrawBoundingBox(renderComponent->color, positionComponent->position, renderComponent->size);
-            }
+			}
+			else if (renderComponent->shape == "terrain") {
+				renderComponent->Draw.DrawTerrain(renderComponent->color, positionComponent->position, renderComponent->size);
+			}
             else 
 			{
 				std::cout << "Shape not found" << std::endl;
