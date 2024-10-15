@@ -9,6 +9,7 @@ public:
 		AddComponent<RenderComponent>(glm::vec3(0.0f), glm::vec3(1.0f), "sphere");
 		AddComponent<VelocityComponent>();
 		AddComponent<AccelerationComponent>();
+		AddComponent<DamageComponent>();
 	}
 	void MoveProjectile(Entity& basePosition, PhysicsSystem& physicsSystem) {
 		auto* position = basePosition.GetComponent<PositionComponent>();
@@ -17,6 +18,7 @@ public:
 		physicsSystem.ApplyForce(*this, glm::vec3(1.0f));
 
 	}
+	
 
 
 };

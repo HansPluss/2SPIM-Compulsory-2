@@ -183,6 +183,7 @@
     <ClInclude Include="includes\KHR\khrplatform.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="InventoryComponent.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="Player.h" />

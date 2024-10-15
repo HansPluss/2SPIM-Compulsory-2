@@ -72,6 +72,7 @@ public:
 
 };
 class DamageComponent : public Component {
+public:
     float damage;
     DamageComponent(float dmg = 10)
         : damage(dmg){}

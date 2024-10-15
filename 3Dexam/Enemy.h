@@ -4,7 +4,7 @@
 #include "PhysicsSystem.h"
 class Enemy : public Entity {
 public:
-    float speed;
+    
 	Enemy() {
 		AddComponent<PositionComponent>(0.0f, 0.0f, 5.0f);
 		AddComponent<RenderComponent>(glm::vec3(0.0f), glm::vec3(1.0f), "cube");
@@ -12,6 +12,8 @@ public:
         AddComponent<AccelerationComponent>();
         AddComponent<AIComponent>();
         AddComponent<PhysicsComponet>(10);
+        AddComponent<HealthComponent>();
+        AddComponent<DamageComponent>();
 	}
     void FollowEntity(Entity& follower, Entity& target, PhysicsSystem& physicssystem) {
         auto* followerPos = follower.GetComponent<PositionComponent>();
