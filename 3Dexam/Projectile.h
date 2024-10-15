@@ -10,6 +10,8 @@ public:
 		AddComponent<VelocityComponent>();
 		AddComponent<AccelerationComponent>();
 		AddComponent<DamageComponent>();
+		lifetime = 5.0f;
+		timer = 0.0f;
 	}
 	void MoveProjectile(Entity& basePosition, PhysicsSystem& physicsSystem) {
 		auto* position = basePosition.GetComponent<PositionComponent>();
@@ -18,7 +20,13 @@ public:
 		physicsSystem.ApplyForce(*this, glm::vec3(1.0f));
 
 	}
-	
-
+	void DespawnTimer(float deltatime) {
+		timer += deltatime;
+		if (timer >= lifetime)
+			isMarkedForDeletion = true;
+	}
+private:
+	float lifetime;
+	float timer;
 
 };

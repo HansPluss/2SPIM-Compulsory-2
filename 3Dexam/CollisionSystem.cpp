@@ -197,10 +197,15 @@ bool CollisionSystem::SphereCollision(Entity& entityA, Entity& entityB, float de
     glm::vec3 sizeA = entityA.GetComponent<RenderComponent>()->size;
     glm::vec3 sizeB = entityB.GetComponent<RenderComponent>()->size;
 
+   
+    if (!velocityA || !velocityB) {
+        return false;
+    }
+
     // Predict positions using velocities
     glm::vec3 futurePosA = positionA->position + velocityA->velocity * deltaTime;
     glm::vec3 futurePosB = positionB->position + velocityB->velocity * deltaTime;
-
+    
     // Calculate the distance between the centers of both objects
     float distanceCenters = glm::length(futurePosA - futurePosB);
 

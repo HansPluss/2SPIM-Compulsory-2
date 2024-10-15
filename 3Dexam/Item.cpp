@@ -32,5 +32,6 @@ void Item::checkCollision(Player& player)
     if (distanceCenters <= (player.GetComponent<RenderComponent>()->size.x + this->GetComponent<RenderComponent>()->size.x))
     {
         Pickup(player); 
+        isMarkedForDeletion = true;
     }
 }

@@ -27,6 +27,7 @@
 #include "PhysicsSystem.h"
 #include "CollisionSystem.h"
 #include "InputSystem.h"
+#include "Resources/Systems/CombatSystem.h"
 
 // Some of the code for the spotlight is from the following repo
 // https://github.com/VictorGordan/opengl-tutorials.git
@@ -36,6 +37,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 bool del = false;
 bool spawnObj = false;
+bool isEKeyPressed = false;
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -47,6 +49,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     InputSystem* inputSystem = static_cast<InputSystem*>(glfwGetWindowUserPointer(window));
 
     scrollY += yoffset;
+   
     if (scrollY > 8.0) {
         scrollY = 1.0;
     }
@@ -95,13 +98,13 @@ int main()
     // Entities setup
     EntityManager manager;
     Entity& newEntity = manager.CreateEntity();
-    newEntity.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    newEntity.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
     newEntity.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f), "cube");
-   
+
     Enemy& enemy = manager.CreateEntityDerivedFromClass<Enemy>();
     enemy.GetComponent<AIComponent>()->speed = 5.0f;
-  
-    
+
+
     // Player Entity
     Player player;
     InputSystem inputSystem;
@@ -110,17 +113,17 @@ int main()
 
     // woodenBall Entity
     Entity woodenBall;
-    woodenBall.AddComponent<PositionComponent>(5.0f,10.0f,0.0f);
-    woodenBall.AddComponent<RenderComponent>(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 1.0f, 1.0f),"sphere");
+    woodenBall.AddComponent<PositionComponent>(5.0f, 10.0f, 0.0f);
+    woodenBall.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "sphere");
     woodenBall.AddComponent<VelocityComponent>();
     woodenBall.AddComponent<AccelerationComponent>();
-	woodenBall.AddComponent<PhysicsComponet>(10);
+    woodenBall.AddComponent<PhysicsComponet>(10);
 
     // planeObject Entity
     Entity planeObject;
-    planeObject.AddComponent<PositionComponent>(0.0f,0.0f,0.0f);
+    planeObject.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
     planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 1.0f, 10.0f), "terrain");
-   
+
 
     PositionComponent* position = woodenBall.GetComponent<PositionComponent>();
     if (position) {
@@ -133,35 +136,37 @@ int main()
     RenderingSystem renderSystem;
     PhysicsSystem physicsSystem;
     CollisionSystem collisionSystem;
+    CombatSystem combatSystem;
 
     renderSystem.initalize(enemy);
-	renderSystem.initalize(woodenBall);
-	renderSystem.initalize(planeObject);
-	renderSystem.initalize(player);
-   
+    renderSystem.initalize(woodenBall);
+    renderSystem.initalize(planeObject);
+    renderSystem.initalize(player);
+
     std::vector<Tick*> Ticks;
 
     // FOR TESTING PURPOSE
     std::vector<Entity*> myEntities;
     myEntities.push_back(&newEntity);
+
     for (auto& entity : myEntities) {
         renderSystem.initalize(*entity);
 
     }
 
     // Setting up grid for collison optimization  
-    int cellSize = 8; 
-    int gridSizeX = 1000; 
-    int gridSizeZ = 1000; 
+    int cellSize = 8;
+    int gridSizeX = 1000;
+    int gridSizeZ = 1000;
     std::unique_ptr<Grid> m_grid = std::make_unique<Grid>(gridSizeX, gridSizeZ, cellSize);
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
-	m_grid->AddBaLL(&woodenBall);
-	m_grid->AddBaLL(&player);
-	m_grid->AddBaLL(&enemy);
+    m_grid->AddBaLL(&woodenBall);
+    m_grid->AddBaLL(&player);
+    m_grid->AddBaLL(&enemy);
 
 
     std::vector<Texture> textures;
-    
+
     char basePath[] = "Resources/Textures/";
     char filetype[] = ".png";
 
@@ -200,10 +205,10 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     int timeSinceStart = 0;
-   
-   // myEntities.push_back(&newEntity);
+
+    // myEntities.push_back(&newEntity);
     auto previousTime = std::chrono::high_resolution_clock::now();
-	Collision collision;
+    Collision collision;
 
     // ---------------------------------------------------------------------------------------------------------------------------
     //                                                        Main Loop
@@ -220,8 +225,8 @@ int main()
         // Calculate delta time (in seconds)
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
         previousTime = currentTime;
-        float dt = deltaTime.count();   
-  
+        float dt = deltaTime.count();
+
         //updates Tick
         for (Tick* obj : Ticks)
         {
@@ -231,9 +236,9 @@ int main()
         //Setup camera settings and inputs
         camera.Inputs(window);
         glm::mat4 viewproj = camera.Matrix(45.0f, 0.1f, 1000.0f, shaderProgram, "camMatrix");
-		camera.Position = glm::vec3(player.GetComponent<PositionComponent>()->position.x, camera.Position.y, player.GetComponent<PositionComponent>()->position.z + 25);
+        camera.Position = glm::vec3(player.GetComponent<PositionComponent>()->position.x, camera.Position.y, player.GetComponent<PositionComponent>()->position.z + 25);
 
-		//collision detection
+        //collision detection
         collision.UpdateCollision(m_grid.get(), dt);
 
         // BALLS
@@ -246,14 +251,14 @@ int main()
         physicsSystem.ApplyForce(woodenBall, glm::vec3(-1.0f, 0.0f, 1.0f));
         collisionSystem.BarycentricCoordinates(woodenBall, planeObject, physicsSystem);
         collisionSystem.InvAABBCollision(planeObject, woodenBall, dt);
-       
+
         // Player
         inputSystem.processInput(player, window);
         physicsSystem.Update(player, dt);
         glBindTexture(GL_TEXTURE_2D, textures[1].texture);
         renderSystem.Render(player, shaderProgram, viewproj);
         collisionSystem.BarycentricCoordinates(player, planeObject, physicsSystem);
-       
+
         physicsSystem.Update(enemy, dt);
         collisionSystem.BarycentricCoordinates(enemy, planeObject, physicsSystem);
         enemy.FollowEntity(enemy, player, physicsSystem);
@@ -266,19 +271,39 @@ int main()
             myEntities.push_back(&bullet);
             spawnObj = false;
         }
-
+        combatSystem.Update(dt);
         for (auto& entity : myEntities) {
-            glBindTexture(GL_TEXTURE_2D, wood.texture);
+            glBindTexture(GL_TEXTURE_2D, textures[4].texture);
             renderSystem.Render(*entity, shaderProgram, viewproj);
-           
+            collisionSystem.BarycentricCoordinates(*entity, planeObject, physicsSystem);
+
+
+            if (collisionSystem.SphereCollision(*entity, enemy, dt)) {
+
+                combatSystem.DealDamage(*entity, enemy);
+                entity->isMarkedForDeletion = true;
+
+            }
+            if (Projectile* projectile = dynamic_cast<Projectile*>(entity)) {
+                // It's a Projectile
+                //std::cout << "This is a projectile!" << std::endl;
+                if (!projectile->isMarkedForDeletion) {
+                    projectile->DespawnTimer(dt);
+
+                }
+            }
+
+
+
+
         }
         for (auto& entity : myEntities) {
             glBindTexture(GL_TEXTURE_2D, wood.texture);
-            physicsSystem.Update(*entity,dt);
+            physicsSystem.Update(*entity, dt);
 
         }
-        
-        
+
+
         // Swap buffers and poll IO events
         if (del) {
             manager.MarkForDeletion(newEntity);
@@ -302,9 +327,22 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
         del = true;
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        spawnObj = true;
-  
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        // Only trigger if the key wasn't pressed in the previous frame
+        if (!isEKeyPressed) {
+            std::cout << "E key pressed!" << std::endl;
+            // Handle the action you want on key press
+            spawnObj = true;
+        }
+        // Mark that the key is now pressed
+        isEKeyPressed = true;
+    }
+    // Check if E key is released
+    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
+        // Mark that the key has been released
+        isEKeyPressed = false;
+    }
+
 }
 
 // Dynamic window size
