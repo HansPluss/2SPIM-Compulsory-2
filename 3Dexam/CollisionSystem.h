@@ -16,6 +16,7 @@ public:
 		}
 
 	}
+
     void BarycentricCoordinates(Entity& ballEntity, Entity& planeEntity, PhysicsSystem& physicsSystem) {
         // Access relevant components from ballEntity and planeEntity
         auto* positionComponent = ballEntity.GetComponent<PositionComponent>();
@@ -31,49 +32,57 @@ public:
         glm::vec3 point = positionComponent->position;
         glm::vec3 ballSize = ballRenderComponent->size;
         std::vector<Vertex>& planeVertices = planeRenderComponent->vertices;
-        float groundThreshold = ballSize.y;
+        double groundThreshold = ballSize.y;
 
         // If the plane has no vertices, return early
         if (planeVertices.empty()) {
             return;
         }
 
-        for (int i = 0; i < planeVertices.size() - 2; ++i) {
-            // Get vertices of the triangle
-            glm::vec3 v0 = glm::vec3((planeVertices[i].x * planeRenderComponent->size.x) + planePositionComponent->position.x,
-                (planeVertices[i].y * planeRenderComponent->size.y) + planePositionComponent->position.y,
-                (planeVertices[i].z * planeRenderComponent->size.z) + planePositionComponent->position.z);
+        for (int i = 0; i < planeRenderComponent->Draw.GetIndices().size(); i += 3) {
+            int index0 = planeRenderComponent->Draw.GetIndices()[i];
+            int index1 = planeRenderComponent->Draw.GetIndices()[i + 1];
+            int index2 = planeRenderComponent->Draw.GetIndices()[i + 2];
 
-            glm::vec3 v1 = glm::vec3((planeVertices[i + 1].x * planeRenderComponent->size.x) + planePositionComponent->position.x,
-                (planeVertices[i + 1].y * planeRenderComponent->size.y) + planePositionComponent->position.y,
-                (planeVertices[i + 1].z * planeRenderComponent->size.z) + planePositionComponent->position.z);
+            glm::vec3 v0 = glm::vec3(
+                (planeVertices[index0].x * planeRenderComponent->size.x) + planePositionComponent->position.x,
+                (planeVertices[index0].y * planeRenderComponent->size.y) + planePositionComponent->position.y,
+                (planeVertices[index0].z * planeRenderComponent->size.z) + planePositionComponent->position.z);
 
-            glm::vec3 v2 = glm::vec3((planeVertices[i + 2].x * planeRenderComponent->size.x) + planePositionComponent->position.x,
-                (planeVertices[i + 2].y * planeRenderComponent->size.y) + planePositionComponent->position.y,
-                (planeVertices[i + 2].z * planeRenderComponent->size.z) + planePositionComponent->position.z);
+            glm::vec3 v1 = glm::vec3(
+                (planeVertices[index1].x * planeRenderComponent->size.x) + planePositionComponent->position.x,
+                (planeVertices[index1].y * planeRenderComponent->size.y) + planePositionComponent->position.y,
+                (planeVertices[index1].z * planeRenderComponent->size.z) + planePositionComponent->position.z);
+
+            glm::vec3 v2 = glm::vec3(
+                (planeVertices[index2].x * planeRenderComponent->size.x) + planePositionComponent->position.x,
+                (planeVertices[index2].y * planeRenderComponent->size.y) + planePositionComponent->position.y,
+                (planeVertices[index2].z * planeRenderComponent->size.z) + planePositionComponent->position.z);
 
             glm::vec3 v0v1 = v1 - v0;
             glm::vec3 v0v2 = v2 - v0;
             glm::vec3 v0p = point - v0;
 
             // Compute dot products
-            float dot00 = glm::dot(v0v1, v0v1);
-            float dot01 = glm::dot(v0v1, v0v2);
-            float dot02 = glm::dot(v0v1, v0p);
-            float dot11 = glm::dot(v0v2, v0v2);
-            float dot12 = glm::dot(v0v2, v0p);
+            double dot00 = glm::dot(v0v1, v0v1);
+            double dot01 = glm::dot(v0v1, v0v2);
+            double dot02 = glm::dot(v0v1, v0p);
+            double dot11 = glm::dot(v0v2, v0v2);
+            double dot12 = glm::dot(v0v2, v0p);
 
             // Compute barycentric coordinates
-            float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
-            float v = (dot11 * dot02 - dot01 * dot12) * invDenom;
-            float w = (dot00 * dot12 - dot01 * dot02) * invDenom;
-            float u = 1 - v - w;
-            float height = v0.y * u + v1.y * v + v2.y * w;
+            double invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+            double v = (dot11 * dot02 - dot01 * dot12) * invDenom;
+            double w = (dot00 * dot12 - dot01 * dot02) * invDenom;
+            double u = 1 - v - w;
 
             // If the point is inside the triangle (u, v, w > 0)
             if (u >= 0 && v >= 0 && w >= 0) {
-                // Adjust position and velocity if ball is near the ground
+                double height = v0.y * u + v1.y * v + v2.y * w;
+                // Adjust position and velocity if ball is near the 
                 glm::vec3 currentVelocity = velocityComponent->velocity;
+                
+                
 
                 if (positionComponent->position.y < height + groundThreshold) {
                     // Stop downward motion and apply corrective force
@@ -82,14 +91,14 @@ public:
                     }
                     
                     // Apply upward force to counteract gravity
-                    //physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.81f, 0.0f));
+                    physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.81f, 0.0f));
                     velocityComponent->velocity = currentVelocity;
 
                     // Apply corrective force if sinking
                     if (positionComponent->position.y < height + groundThreshold) 
                     {
-                        physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.82f, 0.0f));
-                        
+                        positionComponent->position.y = height + groundThreshold;
+                        //std::cout << "height+thresh: " << height << " | position.y " << positionComponent->position.y << std::endl;
                     }
 
                     // Calculate the normal vector for the slope

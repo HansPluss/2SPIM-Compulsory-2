@@ -228,11 +228,67 @@ void Draw::DrawSphere(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
     this->Initalize();
 }
 
+void Draw::DrawTerrain(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
+{
+    position = pos;
+    objSize = size;
+    float waveAmplitude = 10.0f; // Adjust as needed
+    float waveFrequency = 1.0f;
+    float terrainScale = 1.0f;
+    int terrainDepth = 10;
+    int terrainWidth = 10;
 
+    // Generate vertices
+    for (int z = 0; z <= terrainDepth; ++z) {
+        for (int x = 0; x <= terrainWidth; ++x) {
+            // Calculate vertex positions
+            double xPos = static_cast<float>(x) * terrainScale;  // Scale based on x index
+            double zPos = static_cast<float>(z) * terrainScale;  // Scale based on z index
+            double yPos = sin(xPos * waveFrequency) * waveAmplitude + cos(zPos * waveFrequency) * waveAmplitude; // Height variation
 
+            // Texture coordinates
+            float u = static_cast<float>(x) / terrainWidth;
+            float v = static_cast<float>(z) / terrainDepth;
 
+            // Create the vertex
+            Vertex vertex;
+            vertex.x = xPos - size.x / 2;
+            vertex.y = yPos;
+            vertex.z = zPos - size.z / 2;
+            vertex.u = u;
+            vertex.v = v;
 
-//Tribute to DrawTerrain #RIP#Could've been a great function#2024-2024
+            // Normal (placeholder for now)
+            vertex.normalx = 0.0f;
+            vertex.normaly = 1.0f;
+            vertex.normalz = 0.0f;
+
+            vertices.push_back(vertex);
+        }
+    }
+
+    // Generate indices
+    for (int z = 0; z < terrainDepth; ++z) {
+        for (int x = 0; x < terrainWidth; ++x) {
+            // Calculate indices
+            int topLeftIndex = z * (terrainWidth + 1) + x;
+            int topRightIndex = topLeftIndex + 1;
+            int bottomLeftIndex = (z + 1) * (terrainWidth + 1) + x;
+            int bottomRightIndex = bottomLeftIndex + 1;
+
+            // First triangle (top-left, top-right, bottom-left)
+            indices.push_back(topLeftIndex);
+            indices.push_back(topRightIndex);
+            indices.push_back(bottomLeftIndex);
+
+            // Second triangle (top-right, bottom-right, bottom-left)
+            indices.push_back(topRightIndex);
+            indices.push_back(bottomRightIndex);
+            indices.push_back(bottomLeftIndex);
+        }
+    }
+    this->Initalize();
+}
 
 
 

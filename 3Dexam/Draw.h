@@ -34,6 +34,7 @@ public:
 	void DrawPlane(glm::vec3 Color, glm::vec3 pos, glm::vec3 size);
 	void DrawBoundingBox(glm::vec3 Color, glm::vec3 pos, glm::vec3 size);
 	void DrawSphere(glm::vec3 Color, glm::vec3 pos, glm::vec3 size);
+	void DrawTerrain(glm::vec3 Color, glm::vec3 pos, glm::vec3 size);
 
 	//|-----------------------------------------------------------------------------|
 	//|									Public Functions							|
@@ -59,7 +60,9 @@ public:
 	glm::vec3 GetAngularVelocity();
 	glm::vec3 GetSize();
 	std::vector<Vertex> GetVertices() { return vertices; };
+	std::vector<unsigned int> GetIndices() { return indices; };
 	float GetGravity() { return gravity; };
+	
 
 	//|-----------------------------------------------------------------------------|
 	//|									Setters										|

@@ -19,7 +19,7 @@ public:
 	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	glm::vec3 RotationAxis = glm::normalize(glm::cross(Orientation, Up));
-	float angle = glm::radians(-89.9f);
+	float angle = glm::radians(-45.0f);
 
 	// Blocks very first camera input
 	bool firstClick = true;

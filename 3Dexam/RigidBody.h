@@ -5,7 +5,7 @@ class RigidBody
 {
 private:
 
-	float gravity = -9.81;
+	float gravity = -9.81f;
 	float mass = 1.0f;
 	glm::vec3 velocity; 
 	glm::vec3 Acceleration;
