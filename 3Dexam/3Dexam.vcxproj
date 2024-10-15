@@ -144,7 +144,9 @@
     <ClCompile Include="BaseItem.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="Draw.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Grid.cpp" />
