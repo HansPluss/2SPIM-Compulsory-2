@@ -26,6 +26,7 @@ public:
 		}
 	}
 	glm::vec3 CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3 normal) {
+		
 
 		return rigidBody.CalculateGravity(inclineAngle,slopeVector,normal);
 	}

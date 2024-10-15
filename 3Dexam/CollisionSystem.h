@@ -80,15 +80,16 @@ public:
                     if (currentVelocity.y < 0) {
                         currentVelocity.y = 0.0f; // Stop downward motion
                     }
-
+                    
                     // Apply upward force to counteract gravity
-                    physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.81f, 0.0f));
+                    //physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.81f, 0.0f));
                     velocityComponent->velocity = currentVelocity;
 
                     // Apply corrective force if sinking
-                    if (positionComponent->position.y < height + groundThreshold - 0.1) 
+                    if (positionComponent->position.y < height + groundThreshold) 
                     {
-                        physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.86f, 0.0f));
+                        physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.82f, 0.0f));
+                        
                     }
 
                     // Calculate the normal vector for the slope
@@ -102,11 +103,14 @@ public:
                     float speedAdjustment = glm::dot(currentVelocity, slopeVector);
                     if (currentVelocity.y > 0) { // Ball is moving upward
                         currentVelocity.y -= speedAdjustment * sin(inclineAngle);
-
+                      
                         // Ensure ball doesn't go through the floor
                         if (positionComponent->position.y < height + groundThreshold) {
                             positionComponent->position.y = height + groundThreshold;
+                           
+                            //std::cout << "gravity!!" << std::endl;
                             currentVelocity.y = 0; // Stop upward motion
+                            
                         }
                     }
                     else if (currentVelocity.y < 0) { // Ball is moving downward
@@ -115,15 +119,22 @@ public:
                         // Ensure ball doesn't go through the floor
                         if (positionComponent->position.y < height + groundThreshold) {
                             positionComponent->position.y = height + groundThreshold;
+                        
                             currentVelocity.y = 0; // Stop downward motion
+                            
                         }
                     }
 
                     velocityComponent->velocity = currentVelocity;
+                    
 
                     // Calculate gravity effect along the slope and apply force
-                    glm::vec3 gravityAlongSlope = physicsSystem.CalculateGravity(inclineAngle, slopeVector, normal);
-                    physicsSystem.ApplyForce(ballEntity, gravityAlongSlope);
+                    if (glm::length(slopeVector) > 0.00000001f) {
+                        glm::vec3 gravityAlongSlope = physicsSystem.CalculateGravity(inclineAngle, slopeVector, normal);
+                        physicsSystem.ApplyForce(ballEntity, gravityAlongSlope);
+                        //
+                    }
+                   
                 }
 
                 return; // Exit after processing the first intersecting triangle

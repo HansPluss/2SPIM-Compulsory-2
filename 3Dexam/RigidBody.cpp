@@ -3,9 +3,9 @@
 glm::vec3 RigidBody::CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3 normal)
 {
     // Downward gravity force
-    if (glm::length(slopeVector) > 0.0001f) {
-        slopeVector = glm::normalize(slopeVector);
-    }
+    
+    slopeVector = glm::normalize(slopeVector);
+    
     
     glm::vec3 gravityForce(0.0f, gravity, 0.0f);
 
