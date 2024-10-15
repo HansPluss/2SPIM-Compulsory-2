@@ -97,9 +97,7 @@ int main()
 
     // Entities setup
     EntityManager manager;
-    Entity& newEntity = manager.CreateEntity();
-    newEntity.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
-    newEntity.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 1.0f, 1.0f), "cube");
+   
 
     Enemy& enemy = manager.CreateEntityDerivedFromClass<Enemy>();
     enemy.GetComponent<AIComponent>()->speed = 5.0f;
@@ -112,12 +110,7 @@ int main()
     glfwSetScrollCallback(window, scroll_callback);
 
     // woodenBall Entity
-    Entity woodenBall;
-    woodenBall.AddComponent<PositionComponent>(5.0f, 10.0f, 0.0f);
-    woodenBall.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "sphere");
-    woodenBall.AddComponent<VelocityComponent>();
-    woodenBall.AddComponent<AccelerationComponent>();
-    woodenBall.AddComponent<PhysicsComponet>(10);
+
 
     // planeObject Entity
     Entity planeObject;
@@ -125,12 +118,6 @@ int main()
     planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 1.0f, 10.0f), "terrain");
 
 
-    PositionComponent* position = woodenBall.GetComponent<PositionComponent>();
-    if (position) {
-        std::cout << "Position: (" << position->position.x << ", "
-            << position->position.y << ", "
-            << position->position.z << ")" << std::endl;
-    }
 
     // Intializing Systems
     RenderingSystem renderSystem;
@@ -139,7 +126,6 @@ int main()
     CombatSystem combatSystem;
 
     renderSystem.initalize(enemy);
-    renderSystem.initalize(woodenBall);
     renderSystem.initalize(planeObject);
     renderSystem.initalize(player);
 
@@ -147,7 +133,7 @@ int main()
 
     // FOR TESTING PURPOSE
     std::vector<Entity*> myEntities;
-    myEntities.push_back(&newEntity);
+   
 
     for (auto& entity : myEntities) {
         renderSystem.initalize(*entity);
@@ -160,7 +146,7 @@ int main()
     int gridSizeZ = 1000;
     std::unique_ptr<Grid> m_grid = std::make_unique<Grid>(gridSizeX, gridSizeZ, cellSize);
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
-    m_grid->AddBaLL(&woodenBall);
+   
     m_grid->AddBaLL(&player);
     m_grid->AddBaLL(&enemy);
 
@@ -242,16 +228,10 @@ int main()
         collision.UpdateCollision(m_grid.get(), dt);
 
         // BALLS
-        glBindTexture(GL_TEXTURE_2D, wood.texture);
-        renderSystem.Render(woodenBall, shaderProgram, viewproj);
-
+      
         glBindTexture(GL_TEXTURE_2D, green.texture);
         renderSystem.Render(planeObject, shaderProgram, viewproj);
-        physicsSystem.Update(woodenBall, dt);
-        physicsSystem.ApplyForce(woodenBall, glm::vec3(-1.0f, 0.0f, 1.0f));
-        collisionSystem.BarycentricCoordinates(woodenBall, planeObject, physicsSystem);
-        collisionSystem.InvAABBCollision(planeObject, woodenBall, dt);
-
+  
         // Player
         inputSystem.processInput(player, window);
         physicsSystem.Update(player, dt);
@@ -293,20 +273,13 @@ int main()
                 }
             }
 
-
-
-
         }
         for (auto& entity : myEntities) {
             glBindTexture(GL_TEXTURE_2D, wood.texture);
             physicsSystem.Update(*entity, dt);
 
         }
-
-
-        // Swap buffers and poll IO events
         if (del) {
-            manager.MarkForDeletion(newEntity);
             manager.CleanupEntities(myEntities);
             del = false;
         }

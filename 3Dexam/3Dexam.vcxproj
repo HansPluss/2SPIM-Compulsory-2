@@ -161,6 +161,7 @@
     <ClCompile Include="Resources\Shaders\shaderClass.cpp" />
     <ClCompile Include="Resources\Shaders\VAO.cpp" />
     <ClCompile Include="Resources\Shaders\VBO.cpp" />
+    <ClCompile Include="Resources\Systems\CombatSystem.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="SpeedPotion.cpp" />
     <ClCompile Include="stb.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Resources\Shaders\shaderClass.h" />
     <ClInclude Include="Resources\Shaders\VAO.h" />
     <ClInclude Include="Resources\Shaders\VBO.h" />
+    <ClInclude Include="Resources\Systems\CombatSystem.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="SpeedPotion.h" />
     <ClInclude Include="Texture.h" />
