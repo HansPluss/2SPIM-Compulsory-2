@@ -153,6 +153,7 @@
     <ClCompile Include="HealthPotion.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="InventoryComponent.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Resources\ImportedCode\Construct.cpp" />

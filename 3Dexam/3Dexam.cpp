@@ -47,13 +47,13 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     InputSystem* inputSystem = static_cast<InputSystem*>(glfwGetWindowUserPointer(window));
 
     scrollY += yoffset;
-    inputSystem->SetMouseInput(scrollY);
     if (scrollY > 8.0) {
         scrollY = 1.0;
     }
     else if (scrollY < 0.0) {
         scrollY = 8.0;
     }
+    inputSystem->SetMouseInput(scrollY);
 }
 
 int main()
