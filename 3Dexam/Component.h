@@ -94,8 +94,8 @@ public:
     glm::vec3 size;
     float radius;
     bool isColliding = false;
-    CollisionComponent(glm::vec3& size, float radius) 
-        : size(size), radius(radius) {
+    CollisionComponent(float sizex = 1.0f,float sizey = 1.0f, float sizez = 1.0f, float radius = 10.0f)
+        : size(glm::vec3(sizex,sizey,sizez)), radius(radius) {
 
 
     }
