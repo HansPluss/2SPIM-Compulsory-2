@@ -83,7 +83,7 @@ public:
     glm::vec3 color;
     glm::vec3 size;
     glm::vec3 rotation;
-    std::string shape; // Could be "cube", "plane", "sphere", etc.
+    std::string shape; // Could be "cube", "plane", "sphere", "etc".
     std::vector<Vertex> vertices;
     Draw Draw;
     RenderComponent(const glm::vec3& color, const glm::vec3& size, const std::string& shape, const glm::vec3& rotation = glm::vec3(0.0f,0.0f,0.0f))
@@ -136,7 +136,7 @@ public:
         bKey5(false), bKey6(false), bKey7(false), bKey8(false),
         bKey9(false), bKeyQ(false) {}
 
-    // Update input states
+    // Updating input states
     void updateInput(bool up, bool down, bool left, bool right, bool Tab,
         bool key1, bool key2, bool key3, bool key4,
         bool key5, bool key6, bool key7, bool key8,
@@ -147,7 +147,7 @@ public:
         moveRight = right;
         bTab = Tab;
 
-        // Update number key states
+        // Updating number key states
         bKey1 = key1;
         bKey2 = key2;
         bKey3 = key3;

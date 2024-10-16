@@ -19,7 +19,7 @@ public:
     void CleanupEntities(std::vector<Entity*>& entities) {
         entities.erase(std::remove_if(entities.begin(), entities.end(),
             [](Entity* entity) {
-                return entity->isMarkedForDeletion;  // Delete marked entities
+                return entity->isMarkedForDeletion;  // Deleting marked entities
             }), entities.end());
     }
 

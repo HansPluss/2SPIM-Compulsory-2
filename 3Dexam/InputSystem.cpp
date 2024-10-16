@@ -11,7 +11,7 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window)
     VelocityComponent* velocity = entity.GetComponent<VelocityComponent>();
 
     if (input) {
-        // Update input states based on key presses
+        // Updating input states based on key presses
         input->updateInput(
             glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS,
             glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
@@ -31,13 +31,13 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window)
             glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS
         );
 
-        //Get access to player from entity
+        // Getting access to player from entity
         Player* player = dynamic_cast<Player*>(&entity);
         if (player) {
-            //Opens inventory when tab is pressed
+            // Opens inventory when tab is pressed
 
             if (input->bTab && !bUsingItem) {
-                player->GetInventory();  // Call the GetInventory() function
+                player->GetInventory();  // Calling the GetInventory() function
                 bUsingItem = true;
             }
             else if ((input->bKey1 && !bUsingItem) || (inventoryItem == 0 && !bUsingItem && input->bKeyQ))
@@ -88,20 +88,19 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window)
             }
             if (bUsingItem)
             {
-                //To not call the same function multiple times when key is pressed
+                // Spam Protection
                 if (!input->bTab && !input->bKey1 && !input->bKey2 && !input->bKey3 && !input->bKey4 && !input->bKey5 && !input->bKey6 && !input->bKey7 && !input->bKey8 && !input->bKey9 && !input->bKeyQ)
                 {
                     bUsingItem = false;
                 }
             }
 
+            // Maximum speed
+            const float MAX_SPEED = 50.0f;
 
-            // Update velocity based on input
-           // Define a maximum speed
-            const float MAX_SPEED = 50.0f; // Adjust this value to your desired speed limit
-
+            // Updating velocity based on input
             if (velocity) {
-                // Encode movement direction into a single value
+                // Encoding movement direction into a single value
                 int direction = 0;
                 if (input->moveUp) direction |= 1;
                 if (input->moveDown) direction |= 2;

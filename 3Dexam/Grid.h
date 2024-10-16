@@ -19,7 +19,7 @@ public:
     //|-----------------------------------------------------------------------------|
     void AddBaLL(Entity* ball);
     void AddBaLL(Entity* ball, Cell* cell);
-    void RemoveBallFromCell(Entity* ball, Cell* cell); // Updated to take two arguments
+    void RemoveBallFromCell(Entity* ball, Cell* cell);
     //|-----------------------------------------------------------------------------|
     //|                                Getters                                      |
     //|-----------------------------------------------------------------------------|

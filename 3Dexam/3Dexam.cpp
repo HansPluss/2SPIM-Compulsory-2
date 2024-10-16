@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+// Libraries
 #include <iostream>
 #include "glm/mat4x3.hpp"
 #include <glm/glm.hpp>
@@ -7,6 +8,7 @@
 #include <stb/stb_image.h>
 #include <chrono>
 
+// Classes
 #include "Resources/Shaders/shaderClass.h"
 #include "Texture.h"
 #include "Camera.h"
@@ -17,11 +19,11 @@
 #include "Enemy.h"
 #include "Projectile.h"
 
-//can be removed if unused 
+// Can be removed if unused 
 #include "Tick.h"
 #include "memory" // for smart pointers
 
-//systems
+// Systems
 #include "EntityManager.h"
 #include "RenderingSystem.h"
 #include "PhysicsSystem.h"
@@ -33,12 +35,12 @@
 // https://github.com/VictorGordan/opengl-tutorials.git
 // 
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);  // Dynamic window size
 void processInput(GLFWwindow* window);
 bool del = false;
 bool spawnObj = false;
 bool isEKeyPressed = false;
-// settings
+// Window dimensions
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
 
@@ -88,6 +90,7 @@ int main()
 
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
+
     // Shader setup
     Shader shaderProgram("default.vert", "default.frag");
     shaderProgram.Activate();
@@ -95,13 +98,13 @@ int main()
     Shader lightShader("light.vert", "light.frag");
     lightShader.Activate();
 
+
     // Entities setup
     EntityManager manager;
    
-
+    // Enemy Entity
     Enemy& enemy = manager.CreateEntityDerivedFromClass<Enemy>();
     enemy.GetComponent<AIComponent>()->speed = 5.0f;
-
 
     // Player Entity
     Player player;
@@ -109,14 +112,10 @@ int main()
     glfwSetWindowUserPointer(window, &inputSystem);
     glfwSetScrollCallback(window, scroll_callback);
 
-    // woodenBall Entity
-
-
-    // planeObject Entity
+    // Terrain Entity
     Entity planeObject;
     planeObject.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
     planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 1.0f, 10.0f), "terrain");
-
 
 
     // Intializing Systems
@@ -165,15 +164,15 @@ int main()
         textures.push_back(tt);
     }
 
-    //camera FOV & starting position
+    // Camera FOV & starting position
     Camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 40.0f, 0.0f));
 
-    //Initalizing textures
+    // Initalizing textures
     Texture wood("Resources/Textures/wood.png", shaderProgram);
     Texture green("Resources/Textures/green.jpg", shaderProgram);
     Texture queball("Resources/Textures/queball.png", shaderProgram);
 
-    //scene light
+    // Scene light
     glm::vec4 lightColor = glm::vec4(1.0f, 0.9f, 1.0f, 1.0f);
     glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 lightModel = glm::mat4(1.0f);
@@ -213,22 +212,22 @@ int main()
         previousTime = currentTime;
         float dt = deltaTime.count();
 
-        //updates Tick
+        // Updates Tick
         for (Tick* obj : Ticks)
         {
             obj->UpdateTick(dt);
         }
 
-        //Setup camera settings and inputs
+        // Setup camera settings and inputs
         camera.Inputs(window);
         glm::mat4 viewproj = camera.Matrix(45.0f, 0.1f, 1000.0f, shaderProgram, "camMatrix");
         camera.Position = glm::vec3(player.GetComponent<PositionComponent>()->position.x, camera.Position.y, player.GetComponent<PositionComponent>()->position.z + 25);
 
-        //collision detection
+        // Collision detection
         collision.UpdateCollision(m_grid.get(), dt);
 
+
         // BALLS
-      
         glBindTexture(GL_TEXTURE_2D, green.texture);
         renderSystem.Render(planeObject, shaderProgram, viewproj);
   
@@ -239,6 +238,7 @@ int main()
         renderSystem.Render(player, shaderProgram, viewproj);
         collisionSystem.BarycentricCoordinates(player, planeObject, physicsSystem);
 
+        // Enemy
         physicsSystem.Update(enemy, dt);
         collisionSystem.BarycentricCoordinates(enemy, planeObject, physicsSystem);
         enemy.FollowEntity(enemy, player, physicsSystem);

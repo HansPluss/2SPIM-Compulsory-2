@@ -7,7 +7,7 @@
 #include "Resources/Shaders/shaderClass.h"
 #include "Grid.h"
 #include "Component.h"
-#include <random> // For random seed
+#include <random> // For random seeds
 
 Draw::Draw() : rotation(glm::quat(0.0, 0.0, 0.0, 0.0))
 {
@@ -112,8 +112,6 @@ void Draw::DrawPlane(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
     // Calculating the normal using the cross product
     glm::vec3 normal = glm::normalize(glm::cross(AB, AC));
     normalvector = normal;
-    // Output normal for debugging
-    //std::cout << "Normal Vector: (" << normal.x << ", " << normal.y << ", " << normal.z << ")\n";
     this->Initalize();
 }
 
@@ -167,8 +165,7 @@ void Draw::DrawBoundingBox(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 
 void Draw::DrawSphere(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 {
-    // Part of the source code is from this website 
-
+    // Part of the source code is from this website
     // https://stackoverflow.com/questions/45482988/generating-spheres-vertices-indices-and-normals
 
 
@@ -232,16 +229,16 @@ void Draw::DrawTerrain(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 {
     position = pos;
     objSize = size;
-    float waveAmplitude = 10.0f; // Adjust as needed
+    float waveAmplitude = 10.0f; // Adjust for more extreme or subtle "bumps"
     float waveFrequency = 1.0f;
     float terrainScale = 1.0f;
     int terrainDepth = 10;
     int terrainWidth = 10;
 
-    // Generate vertices
+    // Generating vertices
     for (int z = 0; z <= terrainDepth; ++z) {
         for (int x = 0; x <= terrainWidth; ++x) {
-            // Calculate vertex positions
+            // Calculating vertex positions
             double xPos = static_cast<float>(x) * terrainScale;  // Scale based on x index
             double zPos = static_cast<float>(z) * terrainScale;  // Scale based on z index
             double yPos = sin(xPos * waveFrequency) * waveAmplitude + cos(zPos * waveFrequency) * waveAmplitude; // Height variation
@@ -250,7 +247,7 @@ void Draw::DrawTerrain(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
             float u = static_cast<float>(x) / terrainWidth;
             float v = static_cast<float>(z) / terrainDepth;
 
-            // Create the vertex
+            // Creating the vertex
             Vertex vertex;
             vertex.x = xPos - size.x / 2;
             vertex.y = yPos;
@@ -267,10 +264,10 @@ void Draw::DrawTerrain(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
         }
     }
 
-    // Generate indices
+    // Generating indices
     for (int z = 0; z < terrainDepth; ++z) {
         for (int x = 0; x < terrainWidth; ++x) {
-            // Calculate indices
+            // Calculating indices
             int topLeftIndex = z * (terrainWidth + 1) + x;
             int topRightIndex = topLeftIndex + 1;
             int bottomLeftIndex = (z + 1) * (terrainWidth + 1) + x;
@@ -294,24 +291,21 @@ void Draw::DrawTerrain(glm::vec3 Color, glm::vec3 pos, glm::vec3 size)
 
 void Draw::Initalize()
 {
-    //bind the VAO And VBO
-     // Bind the VAO
-    VAO.Bind();
+    VAO.Bind(); // Binding the VAO
+    VBO.Bind(); // Binding the VBO and upload vertex data
 
-    // Bind the VBO and upload vertex data
-    VBO.Bind();
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-    // Set vertex attributes pointers
+    // Setting vertex attributes pointers
     VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, x)); // Position
     VAO.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, r)); // Color
     VAO.LinkAttrib(VBO, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, u)); // TexCoords
 
-    // Bind the EBO and upload index data
+    // Binding the EBO and upload index data
     EBO1.Bind();
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-    // Unbind VAO, VBO, EBO
+    // Unbinding VAO, VBO, EBO
     VAO.Unbind();
     VBO.Unbind();
     EBO1.Unbind();
@@ -381,7 +375,6 @@ glm::vec3 Draw::GetVelocity()
 
 void Draw::ApplyForce(glm::vec3 force)
 {
-    // F = M * A
     Acceleration += force / mass;
 }
 
@@ -433,7 +426,7 @@ void Draw::RotateCube(float deltaTime)
     float speed = glm::length(AngularVelocity);
 
     glm::quat AngularRotation = glm::angleAxis(glm::radians(1.0f), glm::vec3(-AngularVelocity.z, 0.0f, -AngularVelocity.x));
-    Quaternion = Quaternion * AngularRotation * deltaTime;  // Update rotation (quaternion math)
+    Quaternion = Quaternion * AngularRotation * deltaTime;  // Updating rotation (quaternion math)
     Quaternion = glm::normalize(Quaternion);
 
     glm::mat4 newRotationMatrix = glm::mat4_cast(Quaternion);
@@ -453,17 +446,17 @@ void Draw::CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3
     // Downward gravity force
     glm::vec3 gravityForce(0.0f, -gravity, 0.0f);
 
-    // Calculate normal force (perpendicular to the slope)
+    // Calculating normal force (perpendicular to the slope)
     float normalForceMagnitude = glm::dot(gravityForce, normal); // Gravity along the normal
     glm::vec3 normalForce = normal * normalForceMagnitude;
 
-    // Calculate gravitational force acting parallel to the slope (slope vector)
+    // Calculating gravitational force acting parallel to the slope (slope vector)
     glm::vec3 gravityParallel = gravityForce - normalForce; // Parallel force along the slope
 
-    // Project this parallel gravity onto the slope's horizontal direction (slopeVector)
+    // Projecting this parallel gravity onto the slope's horizontal direction (slopeVector)
     glm::vec3 gravityAlongSlope = glm::dot(gravityParallel, slopeVector) * slopeVector;
 
-    // Apply the force along the slope
+    // Applying the force along the slope
     ApplyForce(gravityAlongSlope);
 }
 
@@ -471,18 +464,18 @@ void Draw::FollowPlayer(Draw& ball, float speed)
 {
     glm::vec3 direction = (ball.GetPosition() - GetPosition());
 
-    // Compute the distance(magnitude) between the balls
-        float distance = glm::length(direction);
+    // Computing the distance between the balls
+    float distance = glm::length(direction);
 
-    // Normalize the direction vector (prevent zero-length vector)
+    // Normalizing the direction vector (prevent zero-length vector)
     if (distance > 0.0001f) {
         glm::vec3 dirvec = glm::normalize(direction);
 
-        // Apply force to move the follower ball towards the player ball
-        // Speed controls how fast the follower moves
+        // Applying force to move the follower ball towards the player ball
+        // With speed controls for how fast the follower moves
         glm::vec3 force = dirvec * speed;
 
-        ApplyForce(force); // Apply the calculated force to move the follower
+        ApplyForce(force); // Applying the calculated force to move the follower
     }
 }
 

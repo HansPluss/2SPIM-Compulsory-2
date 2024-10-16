@@ -14,8 +14,8 @@ Player::Player()
 }
 void  Player::AddItemsToInventory() {
 
-	m_inventory.AddItem(speedPotion, 2); // Add one SpeedPotion to the inventory
-	m_inventory.AddItem(healthPotion, 2); // Add one HealthPotion to the inventory
+	m_inventory.AddItem(speedPotion, 2);  // Adding one SpeedPotion to the inventory
+	m_inventory.AddItem(healthPotion, 2); // Adding one HealthPotion to the inventory
 }
 
 Player::~Player()

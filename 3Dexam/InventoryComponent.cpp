@@ -5,10 +5,10 @@
 
 void InventoryComponent::AddItem(std::shared_ptr<BaseItem> item, int quantity)
 {
-    // Create an ItemData object with the shared pointer and quantity
+    // Creating an ItemData object with the shared pointer and quantity
     ItemData newItem(item, quantity);
 
-    // Check for stackable items
+    // Checking for stackable items
     for (auto& i : items) {
         if (i.GetItemID() == newItem.GetItemID() &&
             (i.GetNumItems() + newItem.GetNumItems() <= i.GetStackSize())) {
@@ -33,22 +33,22 @@ void InventoryComponent::RemoveItem(int itemID)
 
 void InventoryComponent::UseItem(int itemslot)
 {
-    // Check if itemslot is valid
+    // Checking if itemslot is valid
     if (itemslot >= 0 && itemslot < items.size()) {
-        auto& item = items[itemslot]; // Use a reference to avoid copying
+        auto& item = items[itemslot];
 
         if (item.GetIsStackable() && item.GetNumItems() > 0 && item.GetItemReference() != nullptr) {
-            item.GetItemReference()->Use(); // Use the item
-            item.numItems--; // Decrease the count
+            item.GetItemReference()->Use(); // Using the item
+            item.numItems--;                // Decreasing the count
 
-            // If no items left, remove it
+            // If no items left, remove it completely
             if (item.GetNumItems() == 0) {
                 RemoveItem(item.GetItemID());
             }
         }
         else if (!item.GetIsStackable() && item.GetItemReference() != nullptr) {
-            item.GetItemReference()->Use(); // Use the item
-            RemoveItem(item.GetItemID()); // Remove it since it's not stackable
+            item.GetItemReference()->Use(); // Using the item
+            RemoveItem(item.GetItemID());   // Removing it since it's not stackable
         }
     }
 }

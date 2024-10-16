@@ -21,17 +21,17 @@ void Enemy::FollowEntity(Entity& follower, Entity& target, PhysicsSystem& physic
     if (followerPos && velocity && targetPos && ai) {
         glm::vec3 direction = targetPos->position - followerPos->position;
 
-        // Compute the distance (magnitude) between entities
+        // Computing the distance between entities
         float distance = glm::length(direction);
 
-        // Normalize the direction vector to prevent zero-length vectors
+        // Normalizing the direction vector to prevent zero-length vectors
         if (distance > 0.0001f) {
             glm::vec3 dirvec = glm::normalize(direction);
 
-            // Apply force to move the follower toward the target
+            // Applying force to move the follower toward the target
             glm::vec3 force = dirvec * ai->speed;
 
-            // Update the follower's velocity based on the force
+            // Updating the follower's velocity based on the force
             physicssystem.ApplyForce(follower, force);
         }
     }

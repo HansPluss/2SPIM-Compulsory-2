@@ -43,13 +43,13 @@ public:
     }
 
     void Render(Entity& entity, Shader& shader, glm::mat4 viewproj) {
-        // Check if the entity has a RenderComponent
+        // Checking if the entity has a RenderComponent
         if (entity.isMarkedForDeletion) return;
         auto* renderComponent = entity.GetComponent<RenderComponent>();
         auto* positionComponent = entity.GetComponent<PositionComponent>();
         if (positionComponent && renderComponent) {
 
-            // Call the general render function
+            // Calling the general render function
             renderComponent->Draw.Render(shader, viewproj, *positionComponent);
             if (renderComponent->shape == "cube") {
                // std::cout << "Marked" << std::endl;

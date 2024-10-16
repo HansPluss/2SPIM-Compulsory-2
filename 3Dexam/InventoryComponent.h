@@ -8,13 +8,12 @@ class BaseItem;
 
 class InventoryComponent : public Component {
 public:
-    // Adds an item to the inventory
-    void AddItem(std::shared_ptr<BaseItem> item, int quantity);
-    void RemoveItem(int itemID);
-    void UseItem(int itemslot);
-    void listItems();
+    void AddItem(std::shared_ptr<BaseItem> item, int quantity); // Adding an item to the inventory
+    void RemoveItem(int itemID);                                // Removing an item to the inventory
+    void UseItem(int itemslot);                                 // Using an item to the inventory
+    void listItems();                                           // Listing inventory contents
 
 private:
-    std::vector<ItemData> items; // Store ItemData objects
+    std::vector<ItemData> items;                                // Stores ItemData objects
 };
 
