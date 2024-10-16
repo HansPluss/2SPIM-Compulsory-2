@@ -1,17 +1,17 @@
 #pragma once
 #include "Entity.h"
-#include "Component.h"
 #include "Player.h"
-class CollisionSystem;
-class Player;
-class Item : public Entity {
+#include "Tick.h"
+class Item : public Entity, public Tick {
 public:
-	Item();
+	Item(Player& player);
 	~Item();
 	void checkCollision(Player& player);
 
 private:
 	void Pickup(Player& player);
 	int ItemID = rand() % 3; // 0, 1, 2
+	Player* playerref;
 
+    void UpdateTick(float deltaTime) override;
 };

@@ -1,13 +1,13 @@
 #include "Item.h"
-#include "Player.h"
 #include "Component.h"
 #include <vector>
 
-Item::Item() : ItemID(0)
+Item::Item(Player& player) : ItemID(0)
 {
     AddComponent<PositionComponent>();
     AddComponent<RenderComponent>(glm::vec3(0.0f), glm::vec3(1.0f), "cube");
-    // AddComponent<CollisionComponent>();
+    //AddComponent<CollisionComponent>();
+	playerref = &player;
 }
 
 Item::~Item()
@@ -18,6 +18,18 @@ void Item::Pickup(Player& player)
 {
 	// Adding a random item to the player's inventory
     player.AddInventoryItem(ItemID);
+}
+
+void Item::UpdateTick(float deltaTime)
+{
+	if (playerref != nullptr)
+	{
+		checkCollision(*playerref);
+	}
+	else
+	{
+		std::cout << "Player reference is null" << std::endl;
+	}
 }
 
 void Item::checkCollision(Player& player) 
