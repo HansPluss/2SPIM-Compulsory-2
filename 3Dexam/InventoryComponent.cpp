@@ -2,6 +2,7 @@
 #include "InventoryComponent.h"
 #include "BaseItem.h"
 #include <iostream>
+#include "ImGuiManager.h"
 
 void InventoryComponent::AddItem(std::shared_ptr<BaseItem> item, int quantity)
 {
@@ -53,9 +54,15 @@ void InventoryComponent::UseItem(int itemslot)
     }
 }
 
-void InventoryComponent::listItems()
+std::vector<ItemData> InventoryComponent::listItems()
 {
-    for (auto& item : items) {
+    /*for (auto& item : items) {
         std::cout << "Item Name: " << item.GetItemName() << " Num Items: " << item.GetNumItems() << std::endl;
-    }
+    }*/
+    return items;
+}
+
+std::vector<ItemData> InventoryComponent::GetItems()
+{
+    return items;
 }

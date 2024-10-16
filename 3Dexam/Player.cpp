@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "BaseItem.h"
 #include <memory>
 Player::Player()
 {
@@ -23,9 +22,9 @@ Player::~Player()
 	// Destructor
 }
 
-void Player::GetInventory()
+std::vector<ItemData> Player::GetInventory()
 {
-	m_inventory.listItems();
+	return m_inventory.listItems();
 }
 
 void Player::AddInventoryItem(int ID)

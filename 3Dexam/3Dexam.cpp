@@ -18,6 +18,7 @@
 #include "Component.h"
 #include "Enemy.h"
 #include "Projectile.h"
+#include "ImGuiManager.h"
 
 // Can be removed if unused 
 #include "Tick.h"
@@ -90,6 +91,7 @@ int main()
 
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
+    ImGuiManager imgui(window);
 
     // Shader setup
     Shader shaderProgram("default.vert", "default.frag");
@@ -205,6 +207,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
         auto currentTime = std::chrono::high_resolution_clock::now();
 
         // Calculate delta time (in seconds)
@@ -283,10 +286,14 @@ int main()
             manager.CleanupEntities(myEntities);
             del = false;
         }
+
+        imgui.BasicText("Inventory", player);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    imgui.shutdown();
     // Clearing GLFW resources
     glfwTerminate();
     return 0;

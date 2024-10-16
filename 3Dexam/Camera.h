@@ -22,7 +22,7 @@ public:
 	float angle = glm::radians(-45.0f);
 
 	// Blocks very first camera input
-	bool firstClick = true;
+	bool firstClick = false;
 
 	// Window dimensions
 	int width;

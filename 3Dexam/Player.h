@@ -3,6 +3,7 @@
 #include "InventoryComponent.h"
 #include "SpeedPotion.h"
 #include "HealthPotion.h"
+#include "BaseItem.h"
 
 class InventoryComponent;
 class Player : public Entity
@@ -10,7 +11,7 @@ class Player : public Entity
 public: 
 	Player();
 	~Player();
-	void GetInventory();
+	std::vector<ItemData> GetInventory();
 	void AddInventoryItem(int ID);
 	void UseInventoryItem(int ID);
 	int GetMaxSpeed() { return maxSpeed; }

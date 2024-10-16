@@ -73,7 +73,7 @@ void Camera::Inputs(GLFWwindow* window)
 		if (firstClick)
 		{
 			glfwSetCursorPos(window, (width / 2), (height / 2));
-			firstClick = false;
+			firstClick = true;
 		}
 
 		// Cursor coordinates
