@@ -16,11 +16,17 @@ public:
         entities.push_back(std::make_unique<T>(std::forward<Args>(args)...));
         return *static_cast<T*>(entities.back().get());
     }
-    void CleanupEntities(std::vector<Entity*>& entities) {
-        entities.erase(std::remove_if(entities.begin(), entities.end(),
-            [](Entity* entity) {
-                return entity->isMarkedForDeletion;  // Deleting marked entities
-            }), entities.end());
+    void DeleteEntities(std::vector<Entity*>& entities) {
+        for (auto it = entities.begin(); it != entities.end();) {
+            if ((*it)->isMarkedForDeletion) {
+                
+                it = entities.erase(it);
+            }
+            else {
+                ++it; 
+            }
+        }
+
     }
 
     void MarkForDeletion(Entity& entity) {

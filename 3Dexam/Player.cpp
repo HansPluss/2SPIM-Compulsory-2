@@ -31,12 +31,12 @@ void Player::AddInventoryItem(int ID)
 {
 	switch (ID)
 	{
-	case 1:
+	case 0:
 	{
 		m_inventory.AddItem(healthPotion, 1);
 		break;
 	}
-	case 2:
+	case 1:
 	{
 		m_inventory.AddItem(speedPotion, 1);
 		break;

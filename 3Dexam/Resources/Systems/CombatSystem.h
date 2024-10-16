@@ -1,11 +1,13 @@
 #pragma once
 #include "../../Entity.h"
+
+class EntityManager;
 class CombatSystem {
 public:
 	CombatSystem();
 	void Update(float deltaTime);
-	void DealDamage(Entity& attacker, Entity& defender);
-	void TakeDamage(Entity& entity, float damage);
+	void DealDamage(Entity& attacker, Entity& defender, EntityManager& manager);
+	
 
 
 private:

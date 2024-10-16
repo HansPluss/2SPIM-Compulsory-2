@@ -1,5 +1,6 @@
 #include "CombatSystem.h"
-
+#include "../../Enemy.h"
+#include "../../EntityManager.h"
 CombatSystem::CombatSystem()
 {
 	damageCooldown = 0.5f;
@@ -11,23 +12,15 @@ void CombatSystem::Update(float deltaTime)
 	lastDamageTime += deltaTime;
 }
 
-void CombatSystem::TakeDamage(Entity& entity, float damage)
-{
-	auto* healthComponent = entity.GetComponent<HealthComponent>();
-	healthComponent->health -= damage;
-	std::cout << "Health: " << healthComponent->health << std::endl;
-	if (healthComponent->health <= 0) {
-		
-		entity.isMarkedForDeletion = true;
-		
-	}
-}
 
-void CombatSystem::DealDamage(Entity& attacker, Entity& defender)
+void CombatSystem::DealDamage(Entity& attacker, Entity& defender, EntityManager& manager)
 {
+	auto* damageComponent = attacker.GetComponent<DamageComponent>();
+	auto* healthComponent = defender.GetComponent<HealthComponent>();
 	if (lastDamageTime >= damageCooldown) {
-		auto* damageComponent = attacker.GetComponent<DamageComponent>();
-		TakeDamage(defender, damageComponent->damage);
+
+		healthComponent->health -= damageComponent->damage;
+		//std::cout << "Health: " << healthComponent->health << std::endl;
 		lastDamageTime = 0.0f;
 	}
 	

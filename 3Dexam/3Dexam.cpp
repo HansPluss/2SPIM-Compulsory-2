@@ -19,6 +19,7 @@
 #include "Enemy.h"
 #include "Projectile.h"
 #include "ImGuiManager.h"
+#include "Item.h"
 
 // Can be removed if unused 
 #include "Tick.h"
@@ -119,23 +120,19 @@ int main()
     planeObject.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
     planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 1.0f, 10.0f), "terrain");
 
-
     // Intializing Systems
     RenderingSystem renderSystem;
     PhysicsSystem physicsSystem;
     CollisionSystem collisionSystem;
     CombatSystem combatSystem;
 
-    renderSystem.initalize(enemy);
-    renderSystem.initalize(planeObject);
-    renderSystem.initalize(player);
-
     std::vector<Tick*> Ticks;
 
-    // FOR TESTING PURPOSE
+    // Intializing entity vector
     std::vector<Entity*> myEntities;
-   
-
+    myEntities.push_back(&enemy);
+    myEntities.push_back(&planeObject);
+    myEntities.push_back(&player);
     for (auto& entity : myEntities) {
         renderSystem.initalize(*entity);
 
@@ -147,11 +144,8 @@ int main()
     int gridSizeZ = 1000;
     std::unique_ptr<Grid> m_grid = std::make_unique<Grid>(gridSizeX, gridSizeZ, cellSize);
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
-   
     m_grid->AddBaLL(&player);
     m_grid->AddBaLL(&enemy);
-
-
     std::vector<Texture> textures;
 
     char basePath[] = "Resources/Textures/";
@@ -229,24 +223,6 @@ int main()
         // Collision detection
         collision.UpdateCollision(m_grid.get(), dt);
 
-
-        // BALLS
-        glBindTexture(GL_TEXTURE_2D, green.texture);
-        renderSystem.Render(planeObject, shaderProgram, viewproj);
-  
-        // Player
-        inputSystem.processInput(player, window);
-        physicsSystem.Update(player, dt);
-        glBindTexture(GL_TEXTURE_2D, textures[1].texture);
-        renderSystem.Render(player, shaderProgram, viewproj);
-        collisionSystem.BarycentricCoordinates(player, planeObject, physicsSystem);
-
-        // Enemy
-        physicsSystem.Update(enemy, dt);
-        collisionSystem.BarycentricCoordinates(enemy, planeObject, physicsSystem);
-        enemy.FollowEntity(enemy, player, physicsSystem);
-        renderSystem.Render(enemy, shaderProgram, viewproj);
-
         if (spawnObj) {
             Projectile& bullet = manager.CreateEntityDerivedFromClass<Projectile>();
             renderSystem.initalize(bullet);
@@ -255,38 +231,48 @@ int main()
             spawnObj = false;
         }
         combatSystem.Update(dt);
-        for (auto& entity : myEntities) {
-            glBindTexture(GL_TEXTURE_2D, textures[4].texture);
-            renderSystem.Render(*entity, shaderProgram, viewproj);
-            collisionSystem.BarycentricCoordinates(*entity, planeObject, physicsSystem);
+        for (int i = 0; i < myEntities.size(); ++i) {
 
-
-            if (collisionSystem.SphereCollision(*entity, enemy, dt)) {
-
-                combatSystem.DealDamage(*entity, enemy);
-                entity->isMarkedForDeletion = true;
+            if (myEntities[i]->GetComponent<RenderComponent>()->shape == "terrain") {
+                glBindTexture(GL_TEXTURE_2D, green.texture);
 
             }
-            if (Projectile* projectile = dynamic_cast<Projectile*>(entity)) {
+            else if(myEntities[i]->GetComponent<RenderComponent>()->shape == "sphere"){
+                glBindTexture(GL_TEXTURE_2D, textures[1].texture);
+
+            }
+            else if (myEntities[i]->GetComponent<RenderComponent>()->shape == "cube") {
+                glBindTexture(GL_TEXTURE_2D, textures[4].texture);
+            }
+            renderSystem.Render(*myEntities[i], shaderProgram, viewproj);
+            collisionSystem.BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
+            physicsSystem.Update(*myEntities[i], dt);
+            if (Projectile* projectile = dynamic_cast<Projectile*>(myEntities[i])) {
                 // It's a Projectile
-                //std::cout << "This is a projectile!" << std::endl;
                 if (!projectile->isMarkedForDeletion) {
                     projectile->DespawnTimer(dt);
+                }
+                if (collisionSystem.SphereCollision(*myEntities[i], enemy, dt)) {
+                    combatSystem.DealDamage(*myEntities[i], enemy, manager);
+                    if (enemy.GetComponent<HealthComponent>()->health <= 0) {
+                        enemy.Death(manager,myEntities,renderSystem);
 
+                    }
+                    myEntities[i]->isMarkedForDeletion = true;
                 }
             }
-
+            if (Item* item = dynamic_cast<Item*>(myEntities[i])) {
+                item->checkCollision(player);
+            } 
+            if (Player* player = dynamic_cast<Player*>(myEntities[i])) {
+                inputSystem.processInput(*player, window);
+            }
+            if (Enemy* enemy = dynamic_cast<Enemy*>(myEntities[i])) {
+                enemy->FollowEntity(player, physicsSystem);
+            }
         }
-        for (auto& entity : myEntities) {
-            glBindTexture(GL_TEXTURE_2D, wood.texture);
-            physicsSystem.Update(*entity, dt);
-
-        }
-        if (del) {
-            manager.CleanupEntities(myEntities);
-            del = false;
-        }
-
+        //Deletes the entities
+        manager.DeleteEntities(myEntities);
         imgui.BasicText("Inventory", player);
 
         glfwSwapBuffers(window);

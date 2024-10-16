@@ -1,5 +1,8 @@
 #include "Enemy.h"
 #include "Component.h"
+#include "EntityManager.h"
+#include "Item.h"
+#include "RenderingSystem.h"
 Enemy::Enemy()
 {
     AddComponent<PositionComponent>(0.0f, 0.0f, 5.0f);
@@ -10,20 +13,22 @@ Enemy::Enemy()
     AddComponent<PhysicsComponet>(10);
     AddComponent<HealthComponent>(50);
     AddComponent<DamageComponent>();
+
 }
 
-void Enemy::FollowEntity(Entity& follower, Entity& target, PhysicsSystem& physicssystem)
+void Enemy::FollowEntity( Entity& target, PhysicsSystem& physicssystem)
 {
-    auto* followerPos = follower.GetComponent<PositionComponent>();
-    auto* velocity = follower.GetComponent<VelocityComponent>();
+    auto* followerPos = GetComponent<PositionComponent>();
+    auto* velocity = GetComponent<VelocityComponent>();
     auto* targetPos = target.GetComponent<PositionComponent>();
-    auto* ai = follower.GetComponent<AIComponent>();
+    auto* ai = GetComponent<AIComponent>();
+  
     if (followerPos && velocity && targetPos && ai) {
         glm::vec3 direction = targetPos->position - followerPos->position;
 
         // Computing the distance between entities
         float distance = glm::length(direction);
-
+        playerref = &target;
         // Normalizing the direction vector to prevent zero-length vectors
         if (distance > 0.0001f) {
             glm::vec3 dirvec = glm::normalize(direction);
@@ -32,7 +37,21 @@ void Enemy::FollowEntity(Entity& follower, Entity& target, PhysicsSystem& physic
             glm::vec3 force = dirvec * ai->speed;
 
             // Updating the follower's velocity based on the force
-            physicssystem.ApplyForce(follower, force);
+            physicssystem.ApplyForce(*this, force);
         }
     }
+}
+
+void Enemy::Death(EntityManager& manager, std::vector<Entity*>& entityList, RenderingSystem& render)
+{
+    
+    Item& item = manager.CreateEntityDerivedFromClass<Item>();
+    glm::vec3 position = GetComponent<PositionComponent>()->position;
+    item.GetComponent<PositionComponent>()->position = position + glm::vec3(0, 10, 0);
+    render.initalize(item);
+    entityList.push_back(&item);
+    isMarkedForDeletion = true;
+    
+
+
 }
