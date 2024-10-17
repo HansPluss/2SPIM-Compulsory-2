@@ -16,11 +16,12 @@ public:
 	void UseInventoryItem(int ID);
 	int GetMaxSpeed() { return maxSpeed; }
 	int GetSpeed() { return speed; }
+	void SetSpeed(int newSpeed) { speed = newSpeed; }
 private:
 	void AddItemsToInventory();
 	InventoryComponent m_inventory;
-	std::shared_ptr<BaseItem> healthPotion = std::make_shared<HealthPotion>();
-	std::shared_ptr<BaseItem> speedPotion = std::make_shared<SpeedPotion>();
+	std::shared_ptr<BaseItem> healthPotion;
+	std::shared_ptr<BaseItem> speedPotion;
 
 	int maxSpeed = 20;
 	int speed = 10; 

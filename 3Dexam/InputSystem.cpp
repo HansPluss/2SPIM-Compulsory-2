@@ -161,6 +161,5 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window)
 int InputSystem::SetMouseInput(int mouseValue)
 {
     inventoryItem = mouseValue;
-    std::cout << "Mouse input: " << inventoryItem << std::endl;
     return inventoryItem;
 }

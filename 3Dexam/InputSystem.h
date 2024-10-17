@@ -7,7 +7,6 @@ class GLFWwindow;
 
 class InputSystem {
 private:
-    bool bTabWasPressed = false;
 	bool bUsingItem = false;
 	int inventoryItem = 0;
 public:
