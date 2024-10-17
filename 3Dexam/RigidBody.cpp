@@ -24,11 +24,12 @@ glm::vec3 RigidBody::CalculateGravity(float inclineAngle, glm::vec3 slopeVector,
 
 void RigidBody::ApplyForce(AccelerationComponent& aComponent, glm::vec3 force)
 {
-    aComponent.acceleration += force / 1.0f; // Mass to be added in next update 
+    aComponent.acceleration += force / 1.0f; // Mass to be added 
 }
 
 void RigidBody::Update(PositionComponent& pComponent, VelocityComponent& vComponent, AccelerationComponent& aComponent, float deltaTime)
 {
+    //updates the position of the entity
     vComponent.velocity += aComponent.acceleration * deltaTime;
     pComponent.position += vComponent.velocity * deltaTime;               
     aComponent.acceleration = glm::vec3(0.0f, gravity, 0.0f);

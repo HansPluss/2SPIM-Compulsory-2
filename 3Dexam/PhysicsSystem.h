@@ -17,11 +17,8 @@ public:
 		}
 	}
 	void UpdatePositions(PositionStorage& storage, AccelerationStorage& aStorage, VelocityStorage& vStorage, std::vector<Entity*>& entityList, float deltatime) {
-		// Ensure that both storage and entityList have the same size
-		
 
 		for (size_t i = 0; i < entityList.size(); ++i) {
-			// Update the position directly in PositionStorage
 
 			// Access the entity via pointer in the entityList
 			if (entityList[i]->GetComponent<PositionComponent>() && entityList[i]->GetComponent<VelocityComponent>() && entityList[i]->GetComponent<AccelerationComponent>()) {

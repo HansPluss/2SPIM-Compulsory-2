@@ -6,12 +6,12 @@
 // TO DO ADD COMMENTS
 class Component {
 public:
-    virtual ~Component() = default;
+    virtual ~Component() = default; // default destructor
 };
 
 class PositionComponent : public Component {
 public:
-    glm::vec3 position;
+    glm::vec3 position; // position for the object
 
     PositionComponent(float x = 0, float y = 0, float z = 0)
         : position(x, y, z) {}
@@ -27,7 +27,7 @@ public:
 };
 class VelocityComponent : public Component {
 public:
-    glm::vec3 velocity;
+    glm::vec3 velocity; // velocity for the object, used for movement
 
     VelocityComponent(float vx = 0, float vy = 0, float vz = 0)
         : velocity(vx, vy, vz) {}
@@ -43,7 +43,7 @@ public:
 }; 
 class AngularVelocityComponent : public Component {
 public:
-    glm::vec3 angularvelocity;
+    glm::vec3 angularvelocity; // velocity for the object, used for movement
 
     AngularVelocityComponent(float avx = 0, float avy = 0, float avz = 0)
         : angularvelocity(avx, avy, avz) {}
@@ -59,39 +59,40 @@ public:
 };
 class AccelerationComponent : public Component {
 public:
-    glm::vec3 acceleration;
+    glm::vec3 acceleration; // acceleration for the object, used for movement
 
     AccelerationComponent(float ax = 0, float ay = 0, float az = 0)
         : acceleration(ax, ay, az) {}
 };
 class HealthComponent : public Component {
 public:
-    float health;
+    float health; // health for the combat system
     HealthComponent(float hp = 100)
         : health(hp){}
 
 };
 class DamageComponent : public Component {
 public:
-    float damage;
+    float damage; // damage for the combat system
     DamageComponent(float dmg = 10.0f)
         : damage(dmg){}
 
 };
 class RenderComponent : public Component {
 public:
+    //Handles all of the variables for rendering an object
     glm::vec3 color;
     glm::vec3 size;
     glm::vec3 rotation;
     std::string shape; // Could be "cube", "plane", "sphere", "etc".
     std::vector<Vertex> vertices;
-    Draw Draw;
+    Draw Draw; // class that houses all the rendering functions
     RenderComponent(const glm::vec3& color, const glm::vec3& size, const std::string& shape, const glm::vec3& rotation = glm::vec3(0.0f,0.0f,0.0f))
         : color(color), size(size), shape(shape), rotation(rotation) {}
 };
 class CollisionComponent : public Component {
 public:
-    glm::vec3 size;
+    glm::vec3 size; // Can be added for custom collision box/sphere
     float radius;
     bool isColliding = false;
     CollisionComponent(float sizex = 1.0f,float sizey = 1.0f, float sizez = 1.0f, float radius = 10.0f)
@@ -103,7 +104,7 @@ public:
 };
 class PhysicsComponet : public Component {
 public:
-    float mass;
+    float mass; // For physics objects
     float gravity; 
     PhysicsComponet(float mass = 1.0f, float gravity = 9.81f) :
      mass(mass), gravity(gravity)    {
@@ -115,7 +116,7 @@ public:
 };
 class AIComponent : public Component {
 public:
-    float speed;
+    float speed; // variables the AI can use to tweak, detection, speed etc 
     float detectionRadius;
 
     AIComponent(float speed = 2.0f, float radius = 50.0f)
@@ -127,6 +128,7 @@ public:
 };
 class InputComponent : public Component {
 public:
+    // Stores all variables related to input, for example for the player class to use
     bool moveUp, moveDown, moveLeft, moveRight, bTab;
     bool bKey1, bKey2, bKey3, bKey4, bKey5, bKey6, bKey7, bKey8, bKey9, bKeyQ;
 
@@ -162,6 +164,7 @@ public:
 };
 class PositionStorage {
 public:
+    // For DOD purposes, stores all position componenets in a vector for batch processing
     std::vector<glm::vec3> positions;
     std::vector<int> entityIDs;
 
@@ -183,6 +186,7 @@ public:
 
 class VelocityStorage {
 public:
+    // For DOD purposes, stores all velocity componenets in a vector for batch processing
     std::vector<glm::vec3> velocities;
     std::vector<int> entityIDs;
 
@@ -204,6 +208,7 @@ public:
 
 class AccelerationStorage {
 public:
+    // For DOD purposes, stores all acceleration componenets in a vector for batch processing
     std::vector<glm::vec3> accelerations;
     std::vector<int> entityIDs;
 

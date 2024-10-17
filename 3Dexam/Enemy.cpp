@@ -44,12 +44,13 @@ void Enemy::FollowEntity( Entity& target, const std::shared_ptr<PhysicsSystem>& 
 
 void Enemy::Death(const std::shared_ptr<EntityManager>& manager, std::vector<Entity*>& entityList, const std::shared_ptr<RenderingSystem>& render)
 {
-    
+    //Spawn the item
     Item& item = manager->CreateEntityDerivedFromClass<Item>();
     glm::vec3 position = GetComponent<PositionComponent>()->position;
     item.GetComponent<PositionComponent>()->position = position + glm::vec3(0, 10, 0);
     render->initalize(item);
     entityList.push_back(&item);
+    //mark this entity for deletion
     isMarkedForDeletion = true;
     
 
