@@ -7,7 +7,7 @@ class CollisionSystem {
 public:
     void AABBCollision(Entity& entityA, std::vector<Entity> entities);
 
-    void BarycentricCoordinates(Entity& ballEntity, Entity& planeEntity, PhysicsSystem& physicsSystem);
+    void BarycentricCoordinates(Entity& ballEntity, Entity& planeEntity, const std::shared_ptr<PhysicsSystem>& physicsSystem);
 
 
 

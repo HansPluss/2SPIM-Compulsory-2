@@ -7,7 +7,7 @@ class Texture
 public:
 	unsigned int texture;
 
-	Texture(const char* texture1, Shader shaderProgram);
+	Texture(const char* texture1, const std::shared_ptr<Shader>& shaderProgram);
 
 	
 };

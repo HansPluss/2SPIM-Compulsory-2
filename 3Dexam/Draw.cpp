@@ -311,7 +311,7 @@ void Draw::Initalize()
     EBO1.Unbind();
 }
 
-void Draw::Render(Shader Shader, glm::mat4 viewproj, PositionComponent& pos)
+void Draw::Render(const std::shared_ptr<Shader>& Shader, glm::mat4 viewproj, PositionComponent& pos)
 {
     glm::mat4 model2 = glm::mat4(1.0f);
 
@@ -321,7 +321,7 @@ void Draw::Render(Shader Shader, glm::mat4 viewproj, PositionComponent& pos)
     model2 = glm::translate(model2, pos.position);
     model2 = glm::scale(model2, objSize);
     model2 *= rotation;
-    glUniformMatrix4fv(glGetUniformLocation(Shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(viewproj * model2));
+    glUniformMatrix4fv(glGetUniformLocation(Shader->ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(viewproj * model2));
     VAO.Bind();
     VBO.Bind();
     EBO1.Bind();
