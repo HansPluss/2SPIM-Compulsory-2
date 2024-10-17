@@ -5,7 +5,7 @@
 #include "RenderingSystem.h"
 Enemy::Enemy()
 {
-    AddComponent<PositionComponent>(0.0f, 0.0f, 5.0f);
+    AddComponent<PositionComponent>(0.0f, 10.0f, 0.0f);
     AddComponent<RenderComponent>(glm::vec3(0.0f), glm::vec3(1.0f), "cube");
     AddComponent<VelocityComponent>();
     AddComponent<AccelerationComponent>();

@@ -129,12 +129,25 @@ int main()
     std::vector<Tick*> Ticks;
 
     // Intializing entity vector
+    PositionStorage storage;
+
+   
     std::vector<Entity*> myEntities;
+    myEntities.push_back(&player);
     myEntities.push_back(&enemy);
     myEntities.push_back(&planeObject);
-    myEntities.push_back(&player);
+   
+
+
     for (auto& entity : myEntities) {
         renderSystem.initalize(*entity);
+        if (auto* posComponent = entity->GetComponent<PositionComponent>()) {
+           
+           storage.AddPosition(posComponent->position);
+            
+                
+            // Add position to storage
+        }
 
     }
 
@@ -180,7 +193,7 @@ int main()
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
     glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-
+    
 
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
@@ -190,7 +203,7 @@ int main()
     // myEntities.push_back(&newEntity);
     auto previousTime = std::chrono::high_resolution_clock::now();
     Collision collision;
-
+    
     // ---------------------------------------------------------------------------------------------------------------------------
     //                                                        Main Loop
     // ---------------------------------------------------------------------------------------------------------------------------
@@ -231,6 +244,7 @@ int main()
             spawnObj = false;
         }
         combatSystem.Update(dt);
+        
         for (int i = 0; i < myEntities.size(); ++i) {
 
             if (myEntities[i]->GetComponent<RenderComponent>()->shape == "terrain") {
@@ -246,7 +260,8 @@ int main()
             }
             renderSystem.Render(*myEntities[i], shaderProgram, viewproj);
             collisionSystem.BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
-            physicsSystem.Update(*myEntities[i], dt);
+            //physicsSystem.Update(*myEntities[i], dt);
+            
             if (Projectile* projectile = dynamic_cast<Projectile*>(myEntities[i])) {
                 // It's a Projectile
                 if (!projectile->isMarkedForDeletion) {
@@ -271,6 +286,7 @@ int main()
                 enemy->FollowEntity(player, physicsSystem);
             }
         }
+        physicsSystem.UpdatePositions(storage, myEntities, dt);
         //Deletes the entities
         manager.DeleteEntities(myEntities);
         imgui.BasicText("Inventory", player);

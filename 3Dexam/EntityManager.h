@@ -1,13 +1,15 @@
 #pragma once
 #include "Entity.h"
 #include <memory>
+#include "Component.h"
 class EntityManager {
 public:
     EntityManager() = default;
 
-
+    
     Entity& CreateEntity() {
         entities.push_back(std::make_unique<Entity>());
+ 
         return *entities.back();
     }
     template<typename T, typename... Args>
@@ -36,6 +38,7 @@ public:
     std::vector<std::unique_ptr<Entity>>& GetEntities() {
         return entities;
     }
+   
 private:
     std::vector<std::unique_ptr<Entity>> entities;
 

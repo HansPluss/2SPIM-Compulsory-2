@@ -257,6 +257,7 @@
     <None Include="default.vert" />
     <None Include="light.vert" />
     <None Include="light.frag" />
+    <None Include="imgui.ini" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Textures\brick.png">

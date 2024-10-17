@@ -160,3 +160,22 @@ public:
         bKeyQ = keyQ;
     }
 };
+class PositionStorage {
+public:
+    std::vector<glm::vec3> positions;
+
+    // Add new position
+    void AddPosition(const glm::vec3& pos) {
+        positions.push_back(pos);
+    }
+
+    // Get position by entity index
+    glm::vec3& GetPosition(size_t index) {
+        return positions[index];
+    }
+
+    // Set position for an entity
+    void SetPosition(size_t index, const glm::vec3& newPos) {
+        positions[index] = newPos;
+    }
+};

@@ -16,6 +16,21 @@ public:
 			rigidBody.Update(*positionComponent, *velocityComponent, *accelerationComponent, deltaTime);
 		}
 	}
+	void UpdatePositions(PositionStorage& storage, std::vector<Entity*>& entityList, float deltatime) {
+		// Ensure that both storage and entityList have the same size
+		size_t count = std::min(storage.positions.size(), entityList.size());
+
+		for (size_t i = 0; i < storage.positions.size(); ++i) {
+			// Update the position directly in PositionStorage
+			storage.positions[i] += glm::vec3(1.0f, 0.0f, 0.0f) * deltatime;
+
+			// Access the entity via pointer in the entityList
+			if (PositionComponent* posComp = entityList[i]->GetComponent<PositionComponent>()) {
+				// Update the PositionComponent with the new position
+				posComp->SetPosition(storage.positions[i]);
+			}
+		}
+	}
 	void ApplyForce(Entity& entity, glm::vec3 force) {
 		
 		if (entity.isMarkedForDeletion) return;
