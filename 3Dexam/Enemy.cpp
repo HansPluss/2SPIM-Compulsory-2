@@ -12,7 +12,7 @@ Enemy::Enemy()
     AddComponent<AIComponent>();
     AddComponent<PhysicsComponet>(10);
     AddComponent<HealthComponent>(50);
-    AddComponent<DamageComponent>();
+    AddComponent<DamageComponent>(10);
 
 }
 

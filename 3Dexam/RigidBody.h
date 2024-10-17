@@ -1,6 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "Component.h"
+#include "Entity.h"
 class RigidBody
 {
 private:
@@ -15,7 +16,7 @@ public:
 	glm::vec3 CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3 normal);
 	void ApplyForce(AccelerationComponent& aComponent, glm::vec3 force);
 	void Update(PositionComponent& position, VelocityComponent& velocity, AccelerationComponent& acceleration, float deltaTime);
-
+	void DODUpdate(PositionStorage& storage,AccelerationStorage& aStorage, VelocityStorage& vStorage,std::vector<Entity*>& entityList, float deltatime);
 	//float GetGravity() { return gravity; };
 
 	//void SetGravity(float newGravity) { gravity = newGravity; }

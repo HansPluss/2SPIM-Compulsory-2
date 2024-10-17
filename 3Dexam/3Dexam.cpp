@@ -120,6 +120,7 @@ int main()
     planeObject.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
     planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 1.0f, 10.0f), "terrain");
 
+
     // Intializing Systems
     std::shared_ptr <RenderingSystem> renderSystem = std::make_shared<RenderingSystem>();
     std::shared_ptr <PhysicsSystem> physicsSystem = std::make_shared<PhysicsSystem>();
@@ -128,26 +129,34 @@ int main()
 
     std::vector<Tick*> Ticks;
 
-    // Intializing entity vector
-    PositionStorage storage;
+  
+    //Store Components
+    PositionStorage positionStorage;
+    VelocityStorage velocityStorage;
+    AccelerationStorage accelerationStorage;
 
-   
+    // Intializing entity vector
     std::vector<Entity*> myEntities;
     myEntities.push_back(&player);
     myEntities.push_back(&enemy);
     myEntities.push_back(&planeObject);
    
 
-
+    //Add all components to storage for batch proccesing
     for (auto& entity : myEntities) {
 
         renderSystem->initalize(*entity);
         if (auto* posComponent = entity->GetComponent<PositionComponent>()) {
            
-           storage.AddPosition(posComponent->position);
-            
-                
-            // Add position to storage
+           positionStorage.AddPosition(posComponent->position, entity->GetId());
+        }
+        if (auto* velocityComponent = entity->GetComponent<VelocityComponent>()) {
+
+            velocityStorage.AddVelocity(velocityComponent->velocity, entity->GetId());
+        }
+        if (auto* accelrationComponent = entity->GetComponent<AccelerationComponent>()) {
+
+            accelerationStorage.AddAcceleration(accelrationComponent->acceleration, entity->GetId());
         }
 
         renderSystem->initalize(*entity);
@@ -185,7 +194,7 @@ int main()
     Texture green("Resources/Textures/green.jpg", shaderProgram);
     Texture queball("Resources/Textures/queball.png", shaderProgram);
 
-    // Scene light
+    // Light setup
     glm::vec4 lightColor = glm::vec4(1.0f, 0.9f, 1.0f, 1.0f);
     glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 lightModel = glm::mat4(1.0f);
@@ -211,9 +220,9 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     int timeSinceStart = 0;
 
-    // myEntities.push_back(&newEntity);
+    //For deltatime
     auto previousTime = std::chrono::high_resolution_clock::now();
-
+    
  
 
     std::shared_ptr<Collision> collision = std::make_shared<Collision>();
@@ -251,6 +260,8 @@ int main()
         // Collision detection
         collision->UpdateCollision(m_grid.get(), dt);
 
+
+        // Spawns a projectile that deals damage to the enemy
         if (spawnObj) {
             Projectile& bullet = manager->CreateEntityDerivedFromClass<Projectile>();
             renderSystem->initalize(bullet);
@@ -258,12 +269,8 @@ int main()
             myEntities.push_back(&bullet);
             spawnObj = false;
         }
-
-        
-        
-
+        //updates the combat system with a timer so that attacks can't be applied more than once per frame
         combatSystem->Update(dt);
-
         for (int i = 0; i < myEntities.size(); ++i) {
 
             if (myEntities[i]->GetComponent<RenderComponent>()->shape == "terrain") {
@@ -278,41 +285,65 @@ int main()
                 glBindTexture(GL_TEXTURE_2D, textures[4].texture);
             }
 
-
-            //physicsSystem.Update(*myEntities[i], dt);
-            
-
-            renderSystem->Render(*myEntities[i], shaderProgram, viewproj);
-            collisionSystem->BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
+            //Gives movement/physics to entities
             physicsSystem->Update(*myEntities[i], dt);
-
+            //Calculates the collisions
+            collisionSystem->BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
+            //Renders the entities
+            renderSystem->Render(*myEntities[i], shaderProgram, viewproj);
+            
+            
+            //Checks if the entity is a projectile
             if (Projectile* projectile = dynamic_cast<Projectile*>(myEntities[i])) {
-                // It's a Projectile
+                
+                //Start the despawn timer
                 if (!projectile->isMarkedForDeletion) {
                     projectile->DespawnTimer(dt);
                 }
+                //Check if projectile collides with an enemy
                 if (collisionSystem->SphereCollision(*myEntities[i], enemy, dt)) {
                     combatSystem->DealDamage(*myEntities[i], enemy, manager);
                     if (enemy.GetComponent<HealthComponent>()->health <= 0) {
+                        //enemy has less than 0 health, enemy is dead
+                        //enemy will drop an item
                         enemy.Death(manager,myEntities,renderSystem);
 
                     }
+                    //Removes the projectile as it has collided with the enemy
                     myEntities[i]->isMarkedForDeletion = true;
                 }
             }
+            //Checks if the entity is a item
             if (Item* item = dynamic_cast<Item*>(myEntities[i])) {
                 item->checkCollision(player);
             } 
+            //Checks if the entity is a player
             if (Player* player = dynamic_cast<Player*>(myEntities[i])) {
                 inputSystem->processInput(*player, window);
+                //If player and enemy collide, deal damage to the player
+                if (collisionSystem->SphereCollision(*player, enemy, dt)) {
+                    //player takes damage
+                    combatSystem->DealDamage(enemy, *player, manager);
+
+                }
             }
+            //Checks if the entity is a enemy
             if (Enemy* enemy = dynamic_cast<Enemy*>(myEntities[i])) {
+                //very basic AI for the enemy to follow the player
                 enemy->FollowEntity(player, physicsSystem);
             }
         }
-        physicsSystem->UpdatePositions(storage, myEntities, dt);
+       
+        // DOD 
+        // Updating the position and collision through batch proccesing 
+        // Currenly works for updating positions, but not for our physics system
+        // 
+        //collisionSystem->DODBarycentric(positionStorage, accelerationStorage, velocityStorage, myEntities, planeObject, physicsSystem);
+        //physicsSystem->UpdatePositions(positionStorage, accelerationStorage, velocityStorage, myEntities, dt);
+
         //Deletes the entities
         manager->DeleteEntities(myEntities);
+        //UI display
         imgui->BasicText("Inventory", player);
 
         glfwSwapBuffers(window);
@@ -334,18 +365,13 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
         del = true;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        // Only trigger if the key wasn't pressed in the previous frame
+       //Use to spawn objects into scene
         if (!isEKeyPressed) {
-            std::cout << "E key pressed!" << std::endl;
-            // Handle the action you want on key press
             spawnObj = true;
         }
-        // Mark that the key is now pressed
         isEKeyPressed = true;
     }
-    // Check if E key is released
-    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
-        // Mark that the key has been released
+    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {   
         isEKeyPressed = false;
     }
 

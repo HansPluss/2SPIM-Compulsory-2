@@ -74,7 +74,7 @@ public:
 class DamageComponent : public Component {
 public:
     float damage;
-    DamageComponent(float dmg = 10)
+    DamageComponent(float dmg = 10.0f)
         : damage(dmg){}
 
 };
@@ -163,19 +163,62 @@ public:
 class PositionStorage {
 public:
     std::vector<glm::vec3> positions;
+    std::vector<int> entityIDs;
 
-    // Add new position
-    void AddPosition(const glm::vec3& pos) {
+    void AddPosition(const glm::vec3& pos, int entityID) {
         positions.push_back(pos);
+        entityIDs.push_back(entityID);
     }
 
-    // Get position by entity index
-    glm::vec3& GetPosition(size_t index) {
-        return positions[index];
+    glm::vec3& GetPositionByEntityID(int entityID) {
+        auto it = std::find(entityIDs.begin(), entityIDs.end(), entityID);
+        if (it != entityIDs.end()) {
+            return positions[std::distance(entityIDs.begin(), it)];
+        }
+        else {
+            
+        }
+    }
+};
+
+class VelocityStorage {
+public:
+    std::vector<glm::vec3> velocities;
+    std::vector<int> entityIDs;
+
+    void AddVelocity(const glm::vec3& vel, int entityID) {
+        velocities.push_back(vel);
+        entityIDs.push_back(entityID);
     }
 
-    // Set position for an entity
-    void SetPosition(size_t index, const glm::vec3& newPos) {
-        positions[index] = newPos;
+    glm::vec3& GetVelocityByEntityID(int entityID) {
+        auto it = std::find(entityIDs.begin(), entityIDs.end(), entityID);
+        if (it != entityIDs.end()) {
+            return velocities[std::distance(entityIDs.begin(), it)];
+        }
+        else {
+           
+        }
+    }
+};
+
+class AccelerationStorage {
+public:
+    std::vector<glm::vec3> accelerations;
+    std::vector<int> entityIDs;
+
+    void AddAcceleration(const glm::vec3& accel, int entityID) {
+        accelerations.push_back(accel);
+        entityIDs.push_back(entityID);
+    }
+
+    glm::vec3& GetAccelerationByEntityID(int entityID) {
+        auto it = std::find(entityIDs.begin(), entityIDs.end(), entityID);
+        if (it != entityIDs.end()) {
+            return accelerations[std::distance(entityIDs.begin(), it)];
+        }
+        else {
+           
+        }
     }
 };

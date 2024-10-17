@@ -20,7 +20,7 @@ void CombatSystem::DealDamage(Entity& attacker, Entity& defender, const std::sha
 	if (lastDamageTime >= damageCooldown) {
 
 		healthComponent->health -= damageComponent->damage;
-		//std::cout << "Health: " << healthComponent->health << std::endl;
+		std::cout << "Health: " << healthComponent->health << std::endl;
 		lastDamageTime = 0.0f;
 	}
 	
