@@ -13,7 +13,7 @@ void CombatSystem::Update(float deltaTime)
 }
 
 
-void CombatSystem::DealDamage(Entity& attacker, Entity& defender, EntityManager& manager)
+void CombatSystem::DealDamage(Entity& attacker, Entity& defender, const std::shared_ptr<EntityManager>& manager)
 {
 	auto* damageComponent = attacker.GetComponent<DamageComponent>();
 	auto* healthComponent = defender.GetComponent<HealthComponent>();

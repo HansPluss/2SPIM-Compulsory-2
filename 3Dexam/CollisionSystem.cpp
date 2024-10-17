@@ -10,7 +10,7 @@ void CollisionSystem::AABBCollision(Entity& entityA, std::vector<Entity> entitie
     }
 }
 
-void CollisionSystem::BarycentricCoordinates(Entity& ballEntity, Entity& planeEntity, PhysicsSystem& physicsSystem)
+void CollisionSystem::BarycentricCoordinates(Entity& ballEntity, Entity& planeEntity, const std::shared_ptr<PhysicsSystem>& physicsSystem)
 {
     // Accessing relevant components from ballEntity and planeEntity
     auto* positionComponent = ballEntity.GetComponent<PositionComponent>();
@@ -85,7 +85,7 @@ void CollisionSystem::BarycentricCoordinates(Entity& ballEntity, Entity& planeEn
                 }
 
                 // Applying upward force to counteract gravity
-                physicsSystem.ApplyForce(ballEntity, glm::vec3(0.0f, 9.81f, 0.0f));
+                physicsSystem->ApplyForce(ballEntity, glm::vec3(0.0f, 9.81f, 0.0f));
                 velocityComponent->velocity = currentVelocity;
 
                 // Applying corrective force if sinking
@@ -128,8 +128,8 @@ void CollisionSystem::BarycentricCoordinates(Entity& ballEntity, Entity& planeEn
 
                 // Calculating gravity effect along the slope and apply force
                 if (glm::length(slopeVector) > 0.00000001f) {
-                    glm::vec3 gravityAlongSlope = physicsSystem.CalculateGravity(inclineAngle, slopeVector, normal);
-                    physicsSystem.ApplyForce(ballEntity, gravityAlongSlope);
+                    glm::vec3 gravityAlongSlope = physicsSystem->CalculateGravity(inclineAngle, slopeVector, normal);
+                    physicsSystem->ApplyForce(ballEntity, gravityAlongSlope);
                 }
 
             }

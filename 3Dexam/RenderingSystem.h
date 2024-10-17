@@ -42,7 +42,7 @@ public:
         SetVertecies(entity);
     }
 
-    void Render(Entity& entity, Shader& shader, glm::mat4 viewproj) {
+    void Render(Entity& entity, const std::shared_ptr<Shader>& shader, glm::mat4 viewproj) {
         // Checking if the entity has a RenderComponent
         if (entity.isMarkedForDeletion) return;
         auto* renderComponent = entity.GetComponent<RenderComponent>();

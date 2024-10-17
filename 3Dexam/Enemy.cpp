@@ -16,7 +16,7 @@ Enemy::Enemy()
 
 }
 
-void Enemy::FollowEntity( Entity& target, PhysicsSystem& physicssystem)
+void Enemy::FollowEntity( Entity& target, const std::shared_ptr<PhysicsSystem>& physicssystem)
 {
     auto* followerPos = GetComponent<PositionComponent>();
     auto* velocity = GetComponent<VelocityComponent>();
@@ -37,18 +37,18 @@ void Enemy::FollowEntity( Entity& target, PhysicsSystem& physicssystem)
             glm::vec3 force = dirvec * ai->speed;
 
             // Updating the follower's velocity based on the force
-            physicssystem.ApplyForce(*this, force);
+            physicssystem->ApplyForce(*this, force);
         }
     }
 }
 
-void Enemy::Death(EntityManager& manager, std::vector<Entity*>& entityList, RenderingSystem& render)
+void Enemy::Death(const std::shared_ptr<EntityManager>& manager, std::vector<Entity*>& entityList, const std::shared_ptr<RenderingSystem>& render)
 {
     
-    Item& item = manager.CreateEntityDerivedFromClass<Item>();
+    Item& item = manager->CreateEntityDerivedFromClass<Item>();
     glm::vec3 position = GetComponent<PositionComponent>()->position;
     item.GetComponent<PositionComponent>()->position = position + glm::vec3(0, 10, 0);
-    render.initalize(item);
+    render->initalize(item);
     entityList.push_back(&item);
     isMarkedForDeletion = true;
     

@@ -7,6 +7,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include "glm/glm.hpp"
 #include "Tick.h"
+#include <memory>
 
 class Shader;
 struct Cell; 
@@ -39,7 +40,7 @@ public:
 	//|-----------------------------------------------------------------------------|
 	//|									Public Functions							|
 	//|-----------------------------------------------------------------------------|		
-	void Render(Shader shader, glm::mat4 viewproj, PositionComponent& pos);
+	void Render(const std::shared_ptr<Shader>& Shader, glm::mat4 viewproj, PositionComponent& pos);
 	void Update(float deltaTime, Grid* grid);
 	void ApplyForce(glm::vec3 force);
 	void MoveXdir();

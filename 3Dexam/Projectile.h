@@ -13,11 +13,11 @@ public:
 		lifetime = 5.0f;
 		timer = 0.0f;
 	}
-	void MoveProjectile(Entity& basePosition, PhysicsSystem& physicsSystem) {
+	void MoveProjectile(Entity& basePosition, const std::shared_ptr<PhysicsSystem>& physicsSystem) {
 		auto* position = basePosition.GetComponent<PositionComponent>();
 		GetComponent<PositionComponent>()->position = position->position;
 
-		physicsSystem.ApplyForce(*this, glm::vec3(1.0f));
+		physicsSystem->ApplyForce(*this, glm::vec3(1.0f));
 
 	}
 	void DespawnTimer(float deltatime) {
