@@ -3,9 +3,10 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include "Player.h"
+#include "Component.h"
 
 
-void InputSystem::processInput(Entity& entity, GLFWwindow* window)
+void InputSystem::processInput(Entity& entity, GLFWwindow* window, VelocityStorage& vStorage)
 {
     InputComponent* input = entity.GetComponent<InputComponent>();
     VelocityComponent* velocity = entity.GetComponent<VelocityComponent>();
@@ -111,15 +112,22 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window)
                 switch (direction) {
                 case 1: // Move up (W)
                     velocity->velocity.z = -player->GetSpeed();
+                    vStorage.GetVelocityByEntityID(entity.GetId()).z = -player->GetSpeed();
+                    
                     break;
                 case 2: // Move down (S)
                     velocity->velocity.z = player->GetSpeed();
+                    vStorage.GetVelocityByEntityID(entity.GetId()).z = player->GetSpeed();
+                   
                     break;
                 case 4: // Move left (A)
-                    velocity->velocity.x = -player->GetSpeed();
+                    //velocity->velocity.x = -player->GetSpeed();
+                    vStorage.GetVelocityByEntityID(entity.GetId()).x = -player->GetSpeed();
                     break;
                 case 8: // Move right (D)
-                    velocity->velocity.x = player->GetSpeed();
+                    //velocity->velocity.x = player->GetSpeed();
+                    vStorage.GetVelocityByEntityID(entity.GetId()).x = player->GetSpeed();
+                   
                     break;
                 case 5: // Move up-left (W + A)
                     velocity->velocity.z = -player->GetSpeed();
@@ -138,8 +146,8 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window)
                     velocity->velocity.z = player->GetSpeed();
                     break;
                 default:
-                    velocity->velocity.x = 0.f;
-                    velocity->velocity.z = 0.f;
+                    vStorage.GetVelocityByEntityID(entity.GetId()).z = 0.f;
+                    vStorage.GetVelocityByEntityID(entity.GetId()).x = 0.f;
                     break;
                 }
 

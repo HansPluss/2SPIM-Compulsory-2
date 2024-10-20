@@ -72,9 +72,20 @@ void RigidBody::DODUpdate(PositionStorage& storage, AccelerationStorage& aStorag
             vStorage.GetVelocityByEntityID(entityID) = velocity;
 
             // Update the entity's PositionComponent
+           
             entity->GetComponent<PositionComponent>()->position = position;
+            entity->GetComponent<AccelerationComponent>()->acceleration = acceleration;
+            entity->GetComponent<VelocityComponent>()->velocity = velocity;
         }
     }
+}
+
+void RigidBody::DODApplyForce(AccelerationStorage& aStorage, glm::vec3 force, int Id)
+{
+    
+ 
+    aStorage.GetAccelerationByEntityID(Id) += force;
+   //std::cout << "Force: " << aStorage.GetAccelerationByEntityID(Id).x;
 }
 
 

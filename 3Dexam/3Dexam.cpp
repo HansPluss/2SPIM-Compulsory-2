@@ -110,7 +110,7 @@ int main()
     enemy.GetComponent<AIComponent>()->speed = 5.0f;
 
     // Player Entity
-    Player player;
+    Player& player = manager->CreateEntityDerivedFromClass<Player>();
     std::shared_ptr<InputSystem> inputSystem = std::make_shared<InputSystem>();
     glfwSetWindowUserPointer(window, &inputSystem);
     glfwSetScrollCallback(window, scroll_callback);
@@ -119,6 +119,12 @@ int main()
     Entity planeObject;
     planeObject.AddComponent<PositionComponent>(0.0f, 0.0f, 0.0f);
     planeObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 1.0f, 10.0f), "terrain");
+
+    Enemy& miscObject = manager->CreateEntityDerivedFromClass<Enemy>();
+    miscObject.AddComponent<PositionComponent>(-5.0f, 10.0f, -5.0f);
+    miscObject.AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "sphere");
+    miscObject.AddComponent<VelocityComponent>();
+    miscObject.AddComponent<AccelerationComponent>();
 
 
     // Intializing Systems
@@ -137,15 +143,18 @@ int main()
 
     // Intializing entity vector
     std::vector<Entity*> myEntities;
+
     myEntities.push_back(&player);
     myEntities.push_back(&enemy);
+   
     myEntities.push_back(&planeObject);
+    myEntities.push_back(&miscObject);
    
 
     //Add all components to storage for batch proccesing
     for (auto& entity : myEntities) {
 
-        renderSystem->initalize(*entity);
+      
         if (auto* posComponent = entity->GetComponent<PositionComponent>()) {
            
            positionStorage.AddPosition(posComponent->position, entity->GetId());
@@ -157,13 +166,14 @@ int main()
         if (auto* accelrationComponent = entity->GetComponent<AccelerationComponent>()) {
 
             accelerationStorage.AddAcceleration(accelrationComponent->acceleration, entity->GetId());
+            
+            
         }
-
         renderSystem->initalize(*entity);
-
+        std::cout << myEntities.size() << " size " << std::endl;
 
     }
-
+    
     // Setting up grid for collison optimization  
     int cellSize = 8;
     int gridSizeX = 1000;
@@ -172,6 +182,7 @@ int main()
     glm::vec4 treeBounds(0, 0, gridSizeX, gridSizeZ);
     m_grid->AddBaLL(&player);
     m_grid->AddBaLL(&enemy);
+    m_grid->AddBaLL(&miscObject);
     std::vector<Texture> textures;
 
     char basePath[] = "Resources/Textures/";
@@ -270,6 +281,8 @@ int main()
             spawnObj = false;
         }
         //updates the combat system with a timer so that attacks can't be applied more than once per frame
+        collisionSystem->DODBarycentric(positionStorage, accelerationStorage, velocityStorage, myEntities, planeObject, physicsSystem);
+        physicsSystem->UpdatePositions(positionStorage, accelerationStorage, velocityStorage, myEntities, dt);
         combatSystem->Update(dt);
         for (int i = 0; i < myEntities.size(); ++i) {
 
@@ -286,9 +299,9 @@ int main()
             }
 
             //Gives movement/physics to entities
-            physicsSystem->Update(*myEntities[i], dt);
+            //physicsSystem->Update(*myEntities[i], dt);
             //Calculates the collisions
-            collisionSystem->BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
+            //collisionSystem->BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
             //Renders the entities
             renderSystem->Render(*myEntities[i], shaderProgram, viewproj);
             
@@ -318,8 +331,12 @@ int main()
                 item->checkCollision(player);
             } 
             //Checks if the entity is a player
+            
+            
             if (Player* player = dynamic_cast<Player*>(myEntities[i])) {
-                inputSystem->processInput(*player, window);
+                inputSystem->processInput(*player, window, velocityStorage);
+                
+                
                 //If player and enemy collide, deal damage to the player
                 if (collisionSystem->SphereCollision(*player, enemy, dt)) {
                     //player takes damage
@@ -330,7 +347,7 @@ int main()
             //Checks if the entity is a enemy
             if (Enemy* enemy = dynamic_cast<Enemy*>(myEntities[i])) {
                 //very basic AI for the enemy to follow the player
-                enemy->FollowEntity(player, physicsSystem);
+                //enemy->FollowEntity(player, physicsSystem);
             }
         }
        
@@ -338,8 +355,8 @@ int main()
         // Updating the position and collision through batch proccesing 
         // Currenly works for updating positions, but not for our physics system
         // 
-        //collisionSystem->DODBarycentric(positionStorage, accelerationStorage, velocityStorage, myEntities, planeObject, physicsSystem);
-        //physicsSystem->UpdatePositions(positionStorage, accelerationStorage, velocityStorage, myEntities, dt);
+        
+        
 
         //Deletes the entities
         manager->DeleteEntities(myEntities);

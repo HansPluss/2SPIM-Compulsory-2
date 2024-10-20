@@ -10,6 +10,6 @@ private:
 	bool bUsingItem = false;
 	int inventoryItem = 0;
 public:
-	void processInput(Entity& entity, GLFWwindow* window);
+	void processInput(Entity& entity, GLFWwindow* window, VelocityStorage& vStorage);
 	int SetMouseInput(int mouseValue);
 };

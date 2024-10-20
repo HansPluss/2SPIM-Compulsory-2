@@ -36,6 +36,11 @@ public:
 			rigidBody.ApplyForce(*accelerationComponent, force);
 		}
 	}
+	void ApplyDODForce(AccelerationStorage& aStorage, glm::vec3 force, int Id) {
+
+		rigidBody.DODApplyForce(aStorage, force,Id);
+		
+	}
 	glm::vec3 CalculateGravity(float inclineAngle, glm::vec3 slopeVector, glm::vec3 normal) {
 		
 

@@ -17,6 +17,6 @@ public:
 	void ApplyForce(AccelerationComponent& aComponent, glm::vec3 force);
 	void Update(PositionComponent& position, VelocityComponent& velocity, AccelerationComponent& acceleration, float deltaTime);
 	void DODUpdate(PositionStorage& storage,AccelerationStorage& aStorage, VelocityStorage& vStorage,std::vector<Entity*>& entityList, float deltatime);
-	
+	void DODApplyForce(AccelerationStorage& aStorage, glm::vec3 force, int Id);
 };
 

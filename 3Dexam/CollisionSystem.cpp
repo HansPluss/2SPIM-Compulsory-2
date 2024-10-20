@@ -149,20 +149,18 @@ void CollisionSystem::DODBarycentric(PositionStorage& storage, AccelerationStora
         auto* ballRenderComponent = entityList[entityID]->GetComponent<RenderComponent>();
         auto* planePositionComponent = planeEntity.GetComponent<PositionComponent>();
         auto* planeRenderComponent = planeEntity.GetComponent<RenderComponent>();
-        if (entityList[entityID]->isMarkedForDeletion) return;
+        if (entityList[entityID]->isMarkedForDeletion) continue;
         if (!positionComponent || !velocityComponent || !ballRenderComponent || !planePositionComponent || !planeRenderComponent) {
-            return; // Ensuring all components exist
+            continue; // Ensuring all components exist
         }
 
-        glm::vec3 point = positionComponent->position;
+        glm::vec3 point = storage.GetPositionByEntityID(entityID);
         glm::vec3 ballSize = ballRenderComponent->size;
         std::vector<Vertex>& planeVertices = planeRenderComponent->vertices;
         double groundThreshold = ballSize.y;
 
         // If the plane has no vertices, return early
-        if (planeVertices.empty()) {
-            return;
-        }
+        
 
         for (int i = 0; i < planeRenderComponent->Draw.GetIndices().size(); i += 3) {
             int index0 = planeRenderComponent->Draw.GetIndices()[i];
@@ -205,24 +203,27 @@ void CollisionSystem::DODBarycentric(PositionStorage& storage, AccelerationStora
             if (u >= 0 && v >= 0 && w >= 0) {
                 double height = v0.y * u + v1.y * v + v2.y * w;
                 // Adjusting position and velocity if ball is near the ground
-                glm::vec3 currentVelocity = velocityComponent->velocity;
+                glm::vec3 currentVelocity = vStorage.GetVelocityByEntityID(entityID);
 
 
 
-                if (positionComponent->position.y < height + groundThreshold) {
+                if (storage.GetPositionByEntityID(entityID).y < height + groundThreshold) {
                     // Stopping downward motion and applying corrective force
                     if (currentVelocity.y < 0) {
                         currentVelocity.y = 0.0f; // Stopping downward motion
                     }
 
                     // Applying upward force to counteract gravity
-                    physicsSystem->ApplyForce(*entityList[entityID], glm::vec3(0.0f, 9.81f, 0.0f));
-                    velocityComponent->velocity = currentVelocity;
+                    physicsSystem->ApplyDODForce(aStorage, glm::vec3(0.0f,9.81f,0.0f), entityID);
+                    vStorage.GetVelocityByEntityID(entityID) = currentVelocity;
+                   
 
                     // Applying corrective force if sinking
-                    if (positionComponent->position.y < height + groundThreshold)
+                    if (storage.GetPositionByEntityID(entityID).y < height + groundThreshold)
                     {
-                        positionComponent->position.y = height + groundThreshold;
+                  
+                        glm::vec3 newPos = glm::vec3(storage.GetPositionByEntityID(entityID).x, height + groundThreshold, storage.GetPositionByEntityID(entityID).z);
+                        storage.GetPositionByEntityID(entityID) = newPos;
                     }
 
                     // Calculating the normal vector for the slope
@@ -234,38 +235,42 @@ void CollisionSystem::DODBarycentric(PositionStorage& storage, AccelerationStora
 
                     // Adjusting velocity based on slope incline
                     float speedAdjustment = glm::dot(currentVelocity, slopeVector);
-                    if (currentVelocity.y > 0) { // Ball is moving upward
+                    if (vStorage.GetVelocityByEntityID(entityID).y > 0) { // Ball is moving upward
                         currentVelocity.y -= speedAdjustment * sin(inclineAngle);
 
                         // Ensuring ball doesn't go through the floor
-                        if (positionComponent->position.y < height + groundThreshold) {
-                            positionComponent->position.y = height + groundThreshold;
+                        if (storage.GetPositionByEntityID(entityID).y < height + groundThreshold) {
+                            glm::vec3 newPos = glm::vec3(storage.GetPositionByEntityID(entityID).x, height + groundThreshold, storage.GetPositionByEntityID(entityID).z);
+                            storage.GetPositionByEntityID(entityID) = newPos;
                             currentVelocity.y = 0; // Stopping upward motion
                         }
                     }
-                    else if (currentVelocity.y < 0) { // Ball is moving downward
+                    else if (vStorage.GetVelocityByEntityID(entityID).y < 0) { // Ball is moving downward
                         currentVelocity.y += speedAdjustment * sin(inclineAngle);
 
                         // Ensuring ball doesn't go through the floor
-                        if (positionComponent->position.y < height + groundThreshold) {
-                            positionComponent->position.y = height + groundThreshold;
+                        if (storage.GetPositionByEntityID(entityID).y < height + groundThreshold) {
+                            glm::vec3 newPos = glm::vec3(storage.GetPositionByEntityID(entityID).x, height + groundThreshold, storage.GetPositionByEntityID(entityID).z);
+                            storage.GetPositionByEntityID(entityID) = newPos;
 
                             currentVelocity.y = 0; // Stopping downward motion
                         }
                     }
 
-                    velocityComponent->velocity = currentVelocity;
-
+                    //velocityComponent->velocity = currentVelocity;
+                    vStorage.GetVelocityByEntityID(entityID) = currentVelocity;
+                    
 
                     // Calculating gravity effect along the slope and apply force
                     if (glm::length(slopeVector) > 0.00000001f) {
                         glm::vec3 gravityAlongSlope = physicsSystem->CalculateGravity(inclineAngle, slopeVector, normal);
-                        physicsSystem->ApplyForce(*entityList[entityID], gravityAlongSlope);
+                        physicsSystem->ApplyDODForce(aStorage, gravityAlongSlope, entityID);
                     }
 
                 }
-
-                return; // Exiting after processing the first intersecting triangle
+                continue;
+             
+                 // Exiting after processing the first intersecting triangle
             }
         }
        
