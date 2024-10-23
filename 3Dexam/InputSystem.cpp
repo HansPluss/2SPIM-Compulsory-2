@@ -121,11 +121,11 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window, VelocityStora
                    
                     break;
                 case 4: // Move left (A)
-                    //velocity->velocity.x = -player->GetSpeed();
+                    velocity->velocity.x = -player->GetSpeed();
                     vStorage.GetVelocityByEntityID(entity.GetId()).x = -player->GetSpeed();
                     break;
                 case 8: // Move right (D)
-                    //velocity->velocity.x = player->GetSpeed();
+                    velocity->velocity.x = player->GetSpeed();
                     vStorage.GetVelocityByEntityID(entity.GetId()).x = player->GetSpeed();
                    
                     break;
@@ -148,6 +148,8 @@ void InputSystem::processInput(Entity& entity, GLFWwindow* window, VelocityStora
                 default:
                     vStorage.GetVelocityByEntityID(entity.GetId()).z = 0.f;
                     vStorage.GetVelocityByEntityID(entity.GetId()).x = 0.f;
+                    velocity->velocity.z = 0.0f;
+                    velocity->velocity.x = 0.0f;
                     break;
                 }
 

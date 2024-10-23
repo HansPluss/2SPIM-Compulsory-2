@@ -20,9 +20,22 @@ public:
         return *static_cast<T*>(entities.back().get());
     }
     //Deletes all entities that are marked
-    void DeleteEntities(std::vector<Entity*>& entities) {
+    void DeleteEntities(std::vector<Entity*>& entities, PositionStorage& positionStorage, AccelerationStorage& accelerationStorage, VelocityStorage& velocityStorage) {
         for (auto it = entities.begin(); it != entities.end();) {
             if ((*it)->isMarkedForDeletion) {
+               
+                if ((*it)->GetComponent<PositionComponent>()) {
+                    //positionStorage.RemovePositionByEntityID((*it)->id);
+
+                }
+                if ((*it)->GetComponent<VelocityComponent>()) {
+                    //velocityStorage.RemoveVelocityByEntityID((*it)->id);
+
+                }
+                if ((*it)->GetComponent<AccelerationComponent>()) {
+                    //accelerationStorage.RemoveAccelerationByEntityID((*it)->id);
+
+                }
                 
                 it = entities.erase(it);
             }
@@ -33,7 +46,22 @@ public:
 
     }
     //Extra function for marking entities
-    void MarkForDeletion(Entity& entity) {
+    void MarkForDeletion(Entity& entity, PositionStorage& positionStorage, AccelerationStorage& accelerationStorage, VelocityStorage& velocityStorage) {
+        if (entity.GetComponent<PositionComponent>()) {
+
+            positionStorage.RemovePositionByEntityID(entity.GetId());
+        }
+        if (entity.GetComponent<VelocityComponent>()) {
+
+            velocityStorage.RemoveVelocityByEntityID(entity.GetId());
+        }
+        if (entity.GetComponent<AccelerationComponent>()) {
+
+            accelerationStorage.RemoveAccelerationByEntityID(entity.GetId());
+
+
+        }
+        
         entity.isMarkedForDeletion = true;
 
     }

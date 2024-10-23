@@ -42,10 +42,13 @@ void RigidBody::DODUpdate(PositionStorage& storage, AccelerationStorage& aStorag
 
     // Adjust deltaTime for time scale
     float timeStep = deltaTime * timeScale;
-
     for (auto* entity : entityList) {
-        int entityID = entity->GetId();  // Assuming each entity has an ID
-
+        int entityID = entity->GetId(); 
+        
+      
+           
+        if (entity->isMarkedForDeletion)
+            return;
         // Ensure the entity has all the necessary components
         if (entity->GetComponent<PositionComponent>() && entity->GetComponent<VelocityComponent>() && entity->GetComponent<AccelerationComponent>()) {
             // Update velocity using acceleration

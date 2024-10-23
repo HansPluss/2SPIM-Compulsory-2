@@ -149,11 +149,13 @@ void CollisionSystem::DODBarycentric(PositionStorage& storage, AccelerationStora
         auto* ballRenderComponent = entityList[entityID]->GetComponent<RenderComponent>();
         auto* planePositionComponent = planeEntity.GetComponent<PositionComponent>();
         auto* planeRenderComponent = planeEntity.GetComponent<RenderComponent>();
-        if (entityList[entityID]->isMarkedForDeletion) continue;
+        if (!storage.HasEntity(entityID))
+            continue;
+        if (entityList[entityID]->isMarkedForDeletion) return;
         if (!positionComponent || !velocityComponent || !ballRenderComponent || !planePositionComponent || !planeRenderComponent) {
             continue; // Ensuring all components exist
         }
-
+        
         glm::vec3 point = storage.GetPositionByEntityID(entityID);
         glm::vec3 ballSize = ballRenderComponent->size;
         std::vector<Vertex>& planeVertices = planeRenderComponent->vertices;

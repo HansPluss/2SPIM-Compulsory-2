@@ -178,9 +178,27 @@ public:
         if (it != entityIDs.end()) {
             return positions[std::distance(entityIDs.begin(), it)];
         }
-        else {
-            
+       
+    }
+    void RemovePositionByEntityID(int entityID) {
+        auto it = std::find(entityIDs.begin(), entityIDs.end(), entityID);
+        if (it != entityIDs.end()) {
+            // Find the index of the entityID
+            size_t index = std::distance(entityIDs.begin(), it);
+
+            // Remove the position and entityID at the found index
+            positions.erase(positions.begin() + index);
+            entityIDs.erase(entityIDs.begin() + index);
         }
+    }
+    bool HasEntity(int entityID){
+        for (auto id : entityIDs) {
+            if (id == entityID) {
+                return true;
+            }
+
+        }
+        return false;
     }
 };
 
@@ -200,9 +218,22 @@ public:
         if (it != entityIDs.end()) {
             return velocities[std::distance(entityIDs.begin(), it)];
         }
-        else {
-           
+       
+       
+    }
+    void RemoveVelocityByEntityID(int entityID) {
+        auto it = std::find(entityIDs.begin(), entityIDs.end(), entityID);
+        if (it != entityIDs.end()) {
+            // Find the index of the entityID
+            size_t index = std::distance(entityIDs.begin(), it);
+
+            // Remove the position and entityID at the found index
+            velocities.erase(velocities.begin() + index);
+            entityIDs.erase(entityIDs.begin() + index);
         }
+    }
+    bool HasEntity(int entityID) {
+        return std::find(entityIDs.begin(), entityIDs.end(), entityID) != entityIDs.end();
     }
 };
 
@@ -222,8 +253,20 @@ public:
         if (it != entityIDs.end()) {
             return accelerations[std::distance(entityIDs.begin(), it)];
         }
-        else {
-           
+     
+    }
+    void RemoveAccelerationByEntityID(int entityID) {
+        auto it = std::find(entityIDs.begin(), entityIDs.end(), entityID);
+        if (it != entityIDs.end()) {
+            // Find the index of the entityID
+            size_t index = std::distance(entityIDs.begin(), it);
+
+            // Remove the position and entityID at the found index
+            accelerations.erase(accelerations.begin(), accelerations.begin() + index);
+            entityIDs.erase(entityIDs.begin(), entityIDs.begin() + index);
         }
+    }
+    bool HasEntity(int entityID) {
+        return std::find(entityIDs.begin(), entityIDs.end(), entityID) != entityIDs.end();
     }
 };

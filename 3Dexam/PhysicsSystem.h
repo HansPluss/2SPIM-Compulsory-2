@@ -21,10 +21,10 @@ public:
 		for (size_t i = 0; i < entityList.size(); ++i) {
 
 			// Access the entity via pointer in the entityList
-			if (entityList[i]->GetComponent<PositionComponent>() && entityList[i]->GetComponent<VelocityComponent>() && entityList[i]->GetComponent<AccelerationComponent>()) {
-				// Update the PositionComponent with the new position
-				rigidBody.DODUpdate(storage, aStorage, vStorage, entityList, deltatime);
-			}
+			
+			// Update the PositionComponent with the new position
+			rigidBody.DODUpdate(storage, aStorage, vStorage, entityList, deltatime);
+			
 		}
 	}
 	void ApplyForce(Entity& entity, glm::vec3 force) {

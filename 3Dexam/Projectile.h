@@ -20,10 +20,11 @@ public:
 		physicsSystem->ApplyForce(*this, glm::vec3(1.0f));
 
 	}
-	void DespawnTimer(float deltatime) {
+	bool DespawnTimer(float deltatime) {
 		timer += deltatime;
 		if (timer >= lifetime)
-			isMarkedForDeletion = true;
+			return true;
+		return false;
 	}
 private:
 	float lifetime;

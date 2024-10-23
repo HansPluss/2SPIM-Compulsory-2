@@ -41,7 +41,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);  // D
 void processInput(GLFWwindow* window);
 bool del = false;
 bool spawnObj = false;
+bool spawnEnemy = false;
 bool isEKeyPressed = false;
+bool isRKeyPressed = false;
 // Window dimensions
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -276,13 +278,26 @@ int main()
         if (spawnObj) {
             Projectile& bullet = manager->CreateEntityDerivedFromClass<Projectile>();
             renderSystem->initalize(bullet);
+            positionStorage.AddPosition(bullet.GetComponent<PositionComponent>()->position, bullet.GetId());
+            accelerationStorage.AddAcceleration(bullet.GetComponent<AccelerationComponent>()->acceleration, bullet.GetId());
+            velocityStorage.AddVelocity(bullet.GetComponent<VelocityComponent>()->velocity, bullet.GetId());
             bullet.MoveProjectile(player, physicsSystem);
             myEntities.push_back(&bullet);
             spawnObj = false;
         }
+        if (spawnEnemy) {
+            Enemy& enemy = manager->CreateEntityDerivedFromClass<Enemy>();
+            renderSystem->initalize(enemy);
+            positionStorage.AddPosition(enemy.GetComponent<PositionComponent>()->position, enemy.GetId());
+            accelerationStorage.AddAcceleration(enemy.GetComponent<AccelerationComponent>()->acceleration, enemy.GetId());
+            velocityStorage.AddVelocity(enemy.GetComponent<VelocityComponent>()->velocity, enemy.GetId());
+            
+            myEntities.push_back(&enemy);
+            spawnEnemy = false;
+        }
         //updates the combat system with a timer so that attacks can't be applied more than once per frame
-        collisionSystem->DODBarycentric(positionStorage, accelerationStorage, velocityStorage, myEntities, planeObject, physicsSystem);
-        physicsSystem->UpdatePositions(positionStorage, accelerationStorage, velocityStorage, myEntities, dt);
+        //collisionSystem->DODBarycentric(positionStorage, accelerationStorage, velocityStorage, myEntities, planeObject, physicsSystem);
+        //physicsSystem->UpdatePositions(positionStorage, accelerationStorage, velocityStorage, myEntities, dt);
         combatSystem->Update(dt);
         for (int i = 0; i < myEntities.size(); ++i) {
 
@@ -299,9 +314,9 @@ int main()
             }
 
             //Gives movement/physics to entities
-            //physicsSystem->Update(*myEntities[i], dt);
+            physicsSystem->Update(*myEntities[i], dt);
             //Calculates the collisions
-            //collisionSystem->BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
+            collisionSystem->BarycentricCoordinates(*myEntities[i], planeObject, physicsSystem);
             //Renders the entities
             renderSystem->Render(*myEntities[i], shaderProgram, viewproj);
             
@@ -310,8 +325,8 @@ int main()
             if (Projectile* projectile = dynamic_cast<Projectile*>(myEntities[i])) {
                 
                 //Start the despawn timer
-                if (!projectile->isMarkedForDeletion) {
-                    projectile->DespawnTimer(dt);
+                if (projectile->DespawnTimer(dt)) {
+                    projectile->isMarkedForDeletion = true;
                 }
                 //Check if projectile collides with an enemy
                 if (collisionSystem->SphereCollision(*myEntities[i], enemy, dt)) {
@@ -319,12 +334,13 @@ int main()
                     if (enemy.GetComponent<HealthComponent>()->health <= 0) {
                         //enemy has less than 0 health, enemy is dead
                         //enemy will drop an item
-                        enemy.Death(manager,myEntities,renderSystem);
-
+                        enemy.Death(manager,myEntities,renderSystem,positionStorage,accelerationStorage,velocityStorage);
+                        enemy.isMarkedForDeletion = true;
                     }
                     //Removes the projectile as it has collided with the enemy
                     myEntities[i]->isMarkedForDeletion = true;
                 }
+                
             }
             //Checks if the entity is a item
             if (Item* item = dynamic_cast<Item*>(myEntities[i])) {
@@ -347,7 +363,7 @@ int main()
             //Checks if the entity is a enemy
             if (Enemy* enemy = dynamic_cast<Enemy*>(myEntities[i])) {
                 //very basic AI for the enemy to follow the player
-                //enemy->FollowEntity(player, physicsSystem);
+                enemy->FollowEntity(player, physicsSystem, accelerationStorage);
             }
         }
        
@@ -359,7 +375,7 @@ int main()
         
 
         //Deletes the entities
-        manager->DeleteEntities(myEntities);
+        manager->DeleteEntities(myEntities, positionStorage, accelerationStorage, velocityStorage);
         //UI display
         imgui->BasicText("Inventory", player);
 
@@ -385,11 +401,22 @@ void processInput(GLFWwindow* window)
        //Use to spawn objects into scene
         if (!isEKeyPressed) {
             spawnObj = true;
+            
         }
         isEKeyPressed = true;
     }
     else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {   
         isEKeyPressed = false;
+    }
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        //Use to spawn objects into scene
+        if (!isRKeyPressed) {
+            spawnEnemy = true;
+        }
+        isRKeyPressed = true;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_RELEASE) {
+        isRKeyPressed = false;
     }
 
 }
