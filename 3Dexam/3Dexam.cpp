@@ -44,9 +44,11 @@ bool spawnObj = false;
 bool spawnEnemy = false;
 bool isEKeyPressed = false;
 bool isRKeyPressed = false;
+int enemyKills = 0;
+bool gameOver = false;
 // Window dimensions
-const unsigned int SCR_WIDTH = 2560;
-const unsigned int SCR_HEIGHT = 1440;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 double scrollY = 0.0;  // Store scroll amount
 
@@ -320,7 +322,10 @@ int main()
             //Renders the entities
             renderSystem->Render(*myEntities[i], shaderProgram, viewproj);
             
-            
+            if (Enemy* enemy = dynamic_cast<Enemy*>(myEntities[i])) {
+                //very basic AI for the enemy to follow the player
+                enemy->FollowEntity(player, physicsSystem, accelerationStorage);
+            }
             //Checks if the entity is a projectile
             if (Projectile* projectile = dynamic_cast<Projectile*>(myEntities[i])) {
                 
@@ -328,18 +333,32 @@ int main()
                 if (projectile->DespawnTimer(dt)) {
                     projectile->isMarkedForDeletion = true;
                 }
-                //Check if projectile collides with an enemy
-                if (collisionSystem->SphereCollision(*myEntities[i], enemy, dt)) {
-                    combatSystem->DealDamage(*myEntities[i], enemy, manager);
-                    if (enemy.GetComponent<HealthComponent>()->health <= 0) {
-                        //enemy has less than 0 health, enemy is dead
-                        //enemy will drop an item
-                        enemy.Death(manager,myEntities,renderSystem,positionStorage,accelerationStorage,velocityStorage);
-                        enemy.isMarkedForDeletion = true;
+                for (int j = 0; j < myEntities.size(); ++j) {
+                    if (Enemy* enemy = dynamic_cast<Enemy*>(myEntities[j])) {
+                        // Check for collision between the projectile and the enemy
+                        if (collisionSystem->SphereCollision(*projectile, *enemy, dt)) {
+                            combatSystem->DealDamage(*projectile, *enemy, manager);
+
+                            // If the enemy's health drops to 0 or below, mark it for deletion
+                            if (enemy->GetComponent<HealthComponent>()->health <= 0) {
+                                // The enemy is dead, trigger death logic
+                                enemy->Death(manager, myEntities, renderSystem, positionStorage, accelerationStorage, velocityStorage);
+                                enemy->isMarkedForDeletion = true;
+                                spawnEnemy = true;
+                                enemyKills++;
+                                if (enemyKills >= 3) {
+                                    std::cout << "YOU WIN!!" << std::endl;
+                                }
+                                
+                            }
+
+                            // Mark the projectile for deletion as it collided with the enemy
+                            projectile->isMarkedForDeletion = true;
+                            break; // Break out of the loop once collision is handled
+                        }
                     }
-                    //Removes the projectile as it has collided with the enemy
-                    myEntities[i]->isMarkedForDeletion = true;
                 }
+
                 
             }
             //Checks if the entity is a item
@@ -350,7 +369,16 @@ int main()
             
             
             if (Player* player = dynamic_cast<Player*>(myEntities[i])) {
-                inputSystem->processInput(*player, window, velocityStorage);
+                if (player->GetComponent<HealthComponent>()->health <= 0)
+                    gameOver = true;
+               if (gameOver) {
+                   std::cout << "Game Over" << std::endl;
+
+               }
+               else {
+                   inputSystem->processInput(*player, window, velocityStorage);
+               }
+               
                 
                 
                 //If player and enemy collide, deal damage to the player
@@ -361,10 +389,7 @@ int main()
                 }
             }
             //Checks if the entity is a enemy
-            if (Enemy* enemy = dynamic_cast<Enemy*>(myEntities[i])) {
-                //very basic AI for the enemy to follow the player
-                enemy->FollowEntity(player, physicsSystem, accelerationStorage);
-            }
+           
         }
        
         // DOD 

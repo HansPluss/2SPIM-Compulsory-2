@@ -11,7 +11,7 @@ Enemy::Enemy()
     AddComponent<AccelerationComponent>();
     AddComponent<AIComponent>();
     AddComponent<PhysicsComponet>(10);
-    AddComponent<HealthComponent>(50);
+    AddComponent<HealthComponent>(30);
     AddComponent<DamageComponent>(10);
 
 }
