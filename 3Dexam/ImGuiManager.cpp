@@ -28,6 +28,8 @@ void ImGuiManager::BasicText(const std::string& stringA, Player& player)
     // UI code here
     ImGui::Begin(stringA.c_str());
 
+    ImGui::Text("HP: %.0f", player.GetComponent<HealthComponent>()->health);
+
     int slot = 1;
     for (auto& item : player.GetInventory()) {
         ImGui::Text("Slot %d: %s (%d)", slot, item.GetItemName().c_str(), item.GetNumItems());
