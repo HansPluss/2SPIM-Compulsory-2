@@ -45,8 +45,8 @@ bool spawnEnemy = false;
 bool isEKeyPressed = false;
 bool isRKeyPressed = false;
 // Window dimensions
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 800;
+const unsigned int SCR_WIDTH = 2560;
+const unsigned int SCR_HEIGHT = 1440;
 
 double scrollY = 0.0;  // Store scroll amount
 

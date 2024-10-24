@@ -9,7 +9,7 @@ Player::Player()
 	AddComponent<RenderComponent>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), "sphere");
 	AddComponent<PhysicsComponet>();
 	AddComponent<HealthComponent>(100);
-	healthPotion = std::make_shared<HealthPotion>();
+	healthPotion = std::make_shared<HealthPotion>(*this);
 	speedPotion = std::make_shared<SpeedPotion>(*this);
 
 	AddItemsToInventory();

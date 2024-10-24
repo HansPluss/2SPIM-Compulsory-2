@@ -1,17 +1,18 @@
 #include "HealthPotion.h"
 #include <iostream>
-HealthPotion::HealthPotion()
+#include "Player.h"
+HealthPotion::HealthPotion(Player& player) : ref(player)
 {
-}
 
+}
 HealthPotion::~HealthPotion() 
 {
 }
 
 void HealthPotion::Use()
 {
-	std::cout << "Using health potion..." << std::endl;
-	// Restore health
-//playerHealth += healthAmount;
-//playerHealth = std::min(playerHealth, maxHealth);
+	
+	ref.GetComponent<HealthComponent>()->health += healthAmount;
+	std::cout << "Health restored by " << healthAmount << " points." << std::endl;
+	std::cout << "Current health: " << ref.GetComponent<HealthComponent>()->health << std::endl;
 }

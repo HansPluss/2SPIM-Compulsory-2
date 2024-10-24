@@ -1,10 +1,12 @@
 #pragma once
 #include "BaseItem.h"
 #include <string>
+
+class Player; 
 class HealthPotion : public BaseItem
 {
 public:
-	HealthPotion();
+	HealthPotion(Player& player);
 	~HealthPotion();
 	void Use();
 	int GetItemID() { return ItemID; };
@@ -17,5 +19,6 @@ private:
 	int ItemID = 0;
 	std::string ItemName = "Health Potion";
 	bool bIsStackable = true;
+	Player& ref;
 };
 
